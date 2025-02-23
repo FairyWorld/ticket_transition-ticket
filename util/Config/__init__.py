@@ -1,4 +1,5 @@
 import glob
+import re
 import sys
 from os import getcwd, makedirs, path
 from time import sleep
@@ -37,6 +38,17 @@ class Config:
         将YAML格式的str转换为dict
         """
         return yaml.safe_load(yaml_str)
+
+    @staticmethod
+    def filename_format(filename: str) -> str:
+        """
+        文件名处理
+
+        filename: 文件名
+        """
+        filename = re.sub(r'[\\/*:?<>|"]', lambda m: "'" if m.group() == '"' else ' ', filename)
+        filename = re.sub(r'\s+', ' ', filename).strip()
+        return filename
 
     @logger.catch
     def List(self) -> list:
@@ -90,7 +102,7 @@ class Config:
         encrypt: 是否加密
         """
         try:
-            with open(f"{self.dir}/{filename}.yaml", "w", encoding="utf-8") as file:
+            with open(f"{self.dir}/{self.filename_format(filename)}.yaml", "w", encoding="utf-8") as file:
                 if encrypt:
                     yaml_str = self.dict_to_yaml_str(data)
                     encrypted_yaml_str = Data().AESEncrypt(yaml_str)
