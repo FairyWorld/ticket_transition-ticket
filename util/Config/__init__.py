@@ -46,8 +46,8 @@ class Config:
 
         filename: 文件名
         """
-        filename = re.sub(r'[\\/*:?<>|"]', lambda m: "'" if m.group() == '"' else ' ', filename)
-        filename = re.sub(r'\s+', ' ', filename).strip()
+        filename = re.sub(r'[\\/*:?<>|"]', lambda m: "'" if m.group() == '"' else " ", filename)
+        filename = re.sub(r"\s+", " ", filename).strip()
         return filename
 
     @logger.catch
