@@ -24,14 +24,14 @@
             packages =
               with pkgs;
               [
-                python312
+                python313
                 poetry
                 portaudio
                 stdenv.cc.cc.lib
                 graphviz
                 pre-commit
               ]
-              ++ (with pkgs.python312Packages; [
+              ++ (with pkgs.python313Packages; [
                 pip
                 venvShellHook
               ]);
