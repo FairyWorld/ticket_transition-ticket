@@ -113,6 +113,7 @@ class Info:
                 "price": f"{(sku['price'] / 100):.2f}",
                 "sale_start": sku["sale_start"],
                 "sale_end": sku["sale_end"],
+                "actId": sku["discount_act"]["act_id"] if sku["discount_act"] is not None else None,
             }
         return dist
 

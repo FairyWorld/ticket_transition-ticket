@@ -34,6 +34,8 @@ class ProductCli:
             "screenId": 0,
             # 价格ID
             "skuId": 0,
+            # 优惠类型
+            "actId": 0,
         }
 
         # 颜色ANSI代码
@@ -135,7 +137,7 @@ class ProductCli:
                     message="请选择价位",
                     choices=list(lists.keys()),
                 )
-                return lists[select], select.split("(")[0].strip().replace(self.YELLOW, "").replace(self.RESET, "")
+                return lists[select], select.split("(")[0].strip().replace(self.YELLOW, "").replace(self.RESET, ""), skuInfo["actId"]
 
             except InfoException:
                 logger.exception("请重新配置活动信息!")
@@ -161,8 +163,9 @@ class ProductCli:
         self.config["projectId"] = ProjectStep()
         self.info = Info(net=self.net, pid=self.config["projectId"])
         self.config["screenId"] = ScreenStep()
-        skuId, skuSelected = SkuStep(screenId=self.config["screenId"])
+        skuId, skuSelected, actId = SkuStep(screenId=self.config["screenId"])
         self.config["skuId"] = skuId
+        self.config["actId"] = actId
 
         self.conf.Save(
             FilenameStep(name=f"{self.info.Project()['name']} ({skuSelected})"),

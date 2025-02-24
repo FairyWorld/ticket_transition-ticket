@@ -88,6 +88,7 @@ if __name__ == "__main__":
             projectId=productConfig["projectId"],
             screenId=productConfig["screenId"],
             skuId=productConfig["skuId"],
+            actId=productConfig["actId"],
             buyer=userConfig["buyer"],
             count=len(userConfig["buyer"]),
             deliver=userConfig["deliver"],

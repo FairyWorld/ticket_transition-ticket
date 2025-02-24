@@ -20,6 +20,7 @@ class Bilibili:
         projectId: int,
         screenId: int,
         skuId: int,
+        actId: int,
         buyer: dict,
         deliver: dict,
         phone: str,
@@ -34,6 +35,7 @@ class Bilibili:
         projectId: 项目ID
         screenId: 场次ID
         skuId: 商品ID
+        actId: 优惠ID
         buyer: 购买者信息
         deliver: 收货信息
         phone: 手机号
@@ -46,6 +48,7 @@ class Bilibili:
         self.projectId = projectId
         self.screenId = screenId
         self.skuId = skuId
+        self.actId = actId
         self.buyer = buyer
         self.phone = phone
         self.userinfo = userinfo
@@ -339,6 +342,10 @@ class Bilibili:
             "clickPosition": clickPosition,
             "requestSource": self.scene,
         }
+
+        # 优惠票
+        if self.actId is not None:
+            params["act_id"] = self.actId
 
         # 邮寄票
         if self.deliverNeed:
