@@ -228,7 +228,7 @@ class Data:
             "buvid4": "",
             # https://github.com/SocialSisterYi/bilibili-API-collect/issues/933#issuecomment-1931506993
             "fingerprint": "",
-            # TODO 浏览器JS
+            # 浏览器JS
             "deviceFingerprint": "",
         }
         dist["buvid_fp"] = dist["fingerprint"]

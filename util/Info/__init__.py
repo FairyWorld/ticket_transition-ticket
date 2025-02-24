@@ -59,7 +59,7 @@ class Info:
         }
         return dist
 
-    def Screen(self) -> dict:  # TODO: 修改为 ScreenList(self) 并新增 Screen(self, sid: int)
+    def ScreenList(self) -> dict:  # TODO: 新增 Screen(self, sid: int)
         """
         场次信息
 
@@ -85,7 +85,7 @@ class Info:
             }
         return dist
 
-    def Sku(self, sid: int) -> dict:  # TODO: 修改为 SkuList(self) 并新增 Sku(self, sid: int, sku: int)
+    def SkuList(self, sid: int) -> dict:  # TODO: 新增 Sku(self, sid: int, sku: int)
         """
         价格信息
 

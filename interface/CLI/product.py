@@ -98,7 +98,7 @@ class ProductCli:
             """
             try:
                 projectInfo = self.info.Project()
-                screenInfo = self.info.Screen()
+                screenInfo = self.info.ScreenList()
 
                 lists = {
                     f"{self.YELLOW if screenInfo[i]['display_name'] == '预售中' else ''}"
@@ -127,7 +127,7 @@ class ProductCli:
             screenId: 场次ID
             """
             try:
-                skuInfo = self.info.Sku(screenId)
+                skuInfo = self.info.SkuList(screenId)
                 lists = {
                     f"{self.YELLOW if skuInfo[i]['display_name'] == '预售中' else ''}{skuInfo[i]['name']} {skuInfo[i]['display_price']}元 ({skuInfo[i]['display_name']}){self.RESET}": skuInfo[
                         i
