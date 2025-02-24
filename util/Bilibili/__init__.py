@@ -20,13 +20,14 @@ class Bilibili:
         projectId: int,
         screenId: int,
         skuId: int,
-        actId: int,
+        act: dict,
         buyer: dict,
         deliver: dict,
         phone: str,
         userinfo: dict,
         orderType: int = 1,
         count: int = 1,
+        cost: int = 0,
     ):
         """
         初始化
@@ -35,32 +36,33 @@ class Bilibili:
         projectId: 项目ID
         screenId: 场次ID
         skuId: 商品ID
-        actId: 优惠ID
+        actId: 优惠信息
         buyer: 购买者信息
         deliver: 收货信息
         phone: 手机号
         userinfo: 用户信息
         orderType: 订单类型
         count: 购买数量
+        cost: 订单单价
         """
         self.net = net
 
         self.projectId = projectId
         self.screenId = screenId
         self.skuId = skuId
-        self.actId = actId
+        self.act = act
         self.buyer = buyer
         self.phone = phone
         self.userinfo = userinfo
 
         self.orderType = orderType
         self.count = count
+        self.cost = cost
 
         self.scene = "neul-next"
         self.screenPath = 0
         self.skuPath = 0
 
-        self.cost = 0
         self.orderId = 0
         self.orderToken = ""
         self.risked = False
@@ -295,21 +297,11 @@ class Bilibili:
                 if screen["id"] == self.skuId:
                     self.deliverFee = max(screen["express_fee"], 0)
 
-                # 有保存Sku位置
-                if sku["id"] == self.skuId:
-                    self.cost = sku["price"]
-
-                # 没保存Screen/Sku位置
+                # 没保存Screen位置
                 else:
                     for _i, screen in enumerate(data["screen_list"]):
                         if screen["id"] == self.screenId:
                             self.deliverFee = max(screen["express_fee"], 0)
-
-                            for _j, sku in enumerate(screen["ticket_list"]):
-                                if sku["id"] == self.skuId:
-                                    self.cost = sku["price"]
-                                    break
-
                             break
             case _:
                 self.cost = 0
@@ -344,8 +336,9 @@ class Bilibili:
         }
 
         # 优惠票
-        if self.actId is not None:
-            params["act_id"] = self.actId
+        if self.act:
+            params["act_id"] = self.act["act_id"]
+            params["order_type"] = self.act["act_type"]
 
         # 邮寄票
         if self.deliverNeed:

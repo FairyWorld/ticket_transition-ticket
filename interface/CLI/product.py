@@ -34,8 +34,8 @@ class ProductCli:
             "screenId": 0,
             # 价格ID
             "skuId": 0,
-            # 优惠类型
-            "actId": 0,
+            # 优惠信息
+            "act": {},
         }
 
         # 颜色ANSI代码
@@ -129,7 +129,7 @@ class ProductCli:
             try:
                 skuInfo = self.info.Sku(screenId)
                 lists = {
-                    f"{self.YELLOW if skuInfo[i]['display_name'] == '预售中' else ''}{skuInfo[i]['name']} {skuInfo[i]['price']}元 ({skuInfo[i]['display_name']}){self.RESET}": skuInfo[i]["id"]
+                    f"{self.YELLOW if skuInfo[i]['display_name'] == '预售中' else ''}{skuInfo[i]['name']} {skuInfo[i]['display_price']}元 ({skuInfo[i]['display_name']}){self.RESET}": skuInfo[i]
                     for i in range(len(skuInfo))
                 }
                 select = self.data.Inquire(
@@ -137,7 +137,7 @@ class ProductCli:
                     message="请选择价位",
                     choices=list(lists.keys()),
                 )
-                return lists[select], select.split("(")[0].strip().replace(self.YELLOW, "").replace(self.RESET, ""), skuInfo["actId"]
+                return lists[select]["id"], lists[select]["name"] + lists[select]["display_price"], lists[select]["price"], lists[select]["act"]
 
             except InfoException:
                 logger.exception("请重新配置活动信息!")
@@ -160,12 +160,16 @@ class ProductCli:
             return filename
 
         print("下面开始配置商品!")
+
         self.config["projectId"] = ProjectStep()
         self.info = Info(net=self.net, pid=self.config["projectId"])
+
         self.config["screenId"] = ScreenStep()
-        skuId, skuSelected, actId = SkuStep(screenId=self.config["screenId"])
+
+        skuId, skuSelected, cost, act = SkuStep(screenId=self.config["screenId"])
         self.config["skuId"] = skuId
-        self.config["actId"] = actId
+        self.config["cost"] = cost
+        self.config["act"] = act
 
         self.conf.Save(
             FilenameStep(name=f"{self.info.Project()['name']} ({skuSelected})"),

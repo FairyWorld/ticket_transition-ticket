@@ -110,10 +110,14 @@ class Info:
                 "id": sku["id"],
                 "name": f"{sku['screen_name']} - {sku['desc']}",
                 "display_name": sku["sale_flag"]["display_name"],
-                "price": f"{(sku['price'] / 100):.2f}",
+                "price": sku["price"],
+                "display_price": f"{(sku['price'] / 100):.2f}",
                 "sale_start": sku["sale_start"],
                 "sale_end": sku["sale_end"],
-                "actId": sku["discount_act"]["act_id"] if sku["discount_act"] is not None else None,
+                "act": {
+                    "act_id": sku["discount_act"]["act_id"],
+                    "act_type": sku["discount_act"]["act_type"],
+                } if sku["discount_act"] is not None else {},
             }
         return dist
 
