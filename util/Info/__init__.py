@@ -117,7 +117,9 @@ class Info:
                 "act": {
                     "act_id": sku["discount_act"]["act_id"],
                     "act_type": sku["discount_act"]["act_type"],
-                } if sku["discount_act"] is not None else {},
+                }
+                if sku["discount_act"] is not None
+                else {},
             }
         return dist
 

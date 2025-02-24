@@ -286,7 +286,7 @@ class Bilibili:
             case 0:
                 data = res["data"]
                 screen = data["screen_list"][self.screenPath]
-                
+
                 self.deliverNeed = res["data"]["has_paper_ticket"]
                 self.contactNeed = not res["data"]["need_contact"]
 
