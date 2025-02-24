@@ -273,6 +273,7 @@ class Bilibili:
     def QueryPrice(self) -> None:
         """
         获取价格
+
         self.cost: 票价
         self.deliverFee: 邮费
         """

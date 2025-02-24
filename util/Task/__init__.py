@@ -43,7 +43,6 @@ class Task:
         self.sleep = sleep
 
         self.data = Data()
-        self.queryCache = False
 
         # 重试创建订单间隔
         self.refreshInterval = 2.1
@@ -68,6 +67,7 @@ class Task:
 
         # Code
         self.skipToken = False
+        self.queryCache = False
         self.countdownOver = False
         self.queryTokenCode = 114514
         self.riskProcessCode = 114514
@@ -287,6 +287,7 @@ class Task:
                 # 预处理
                 if countdown == 30:
                     self.api.QueryPrice()
+                    self.queryCache = True
                     logger.info("【等待开票】已缓存商品信息")
 
         elif countdown == 0:
