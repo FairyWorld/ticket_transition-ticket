@@ -74,7 +74,7 @@ class Bilibili:
         self.payment = 0
 
     @logger.catch
-    def GetSaleStartTime(self) -> tuple:
+    def GetSaleStartTime(self) -> tuple:  # TODO: 调用self.Info.Sku() 替代请求 getv2
         """
         获取开票时间
         """
@@ -269,7 +269,7 @@ class Bilibili:
         return code, msg, clickable, salenum, num
 
     @logger.catch
-    def QueryParamInfo(self) -> None:
+    def QueryParamInfo(self) -> None:  # TODO: 调用self.Info.Screen() 替代请求 getv2
         """
         获取基本信息
 
