@@ -21,6 +21,7 @@ class CustomThemes(GreenPassion):
     """
     自定义主题
     """
+
     def __init__(self):
         """
         初始化

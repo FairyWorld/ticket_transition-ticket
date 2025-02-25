@@ -69,15 +69,17 @@ class Info:
 
         dist = []
         for screen in screens:
-            dist.append({
-                "id": screen["id"],
-                "name": screen["name"],
-                "display_name": screen["saleFlag"]["display_name"],
-                "sale_start": screen["sale_start"],
-                "sale_end": screen["sale_end"],
-                "express_fee": screen["express_fee"],
-                # "express_free_flag": screen["express_free_flag"],
-            })
+            dist.append(
+                {
+                    "id": screen["id"],
+                    "name": screen["name"],
+                    "display_name": screen["saleFlag"]["display_name"],
+                    "sale_start": screen["sale_start"],
+                    "sale_end": screen["sale_end"],
+                    "express_fee": screen["express_fee"],
+                    # "express_free_flag": screen["express_free_flag"],
+                }
+            )
         return dist
 
     def Screen(self, projectId: int, screenId: int) -> dict:
@@ -110,23 +112,26 @@ class Info:
 
         dist = []
         for sku in skus:
-            dist.append({
-                "id": sku["id"],
-                "name": f"{sku['screen_name']} - {sku['desc']}",
-                "display_name": sku["sale_flag"]["display_name"],
-                "price": sku["price"],
-                "display_price": f"{(sku['price'] / 100):.2f}",
-                "sale_start": sku["saleStart"],
-                "sale_end": sku["saleEnd"],
-                "clickable": sku["clickable"],
-                "salenum": sku["sale_flag_number"],
-                "num": sku["num"],
-                "act": {
-                    "act_id": sku["discount_act"]["act_id"],
-                    "act_type": sku["discount_act"]["act_type"],
+            dist.append(
+                {
+                    "id": sku["id"],
+                    "name": f"{sku['screen_name']} - {sku['desc']}",
+                    "display_name": sku["sale_flag"]["display_name"],
+                    "price": sku["price"],
+                    "display_price": f"{(sku['price'] / 100):.2f}",
+                    "sale_start": sku["saleStart"],
+                    "sale_end": sku["saleEnd"],
+                    "clickable": sku["clickable"],
+                    "salenum": sku["sale_flag_number"],
+                    "num": sku["num"],
+                    "act": {
+                        "act_id": sku["discount_act"]["act_id"],
+                        "act_type": sku["discount_act"]["act_type"],
+                    }
+                    if sku["discount_act"]
+                    else {},
                 }
-                if sku["discount_act"] else {},
-            })
+            )
         return dist
 
     def Sku(self, projectId: int, screenId: int, skuId: int, cost: int) -> dict:

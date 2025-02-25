@@ -224,11 +224,11 @@ class Bilibili:
         """
         try:
             skuInfo = self.info.Sku(projectId=self.projectId, screenId=self.screenId, skuId=self.skuId, cost=self.cost)
-            
+
             clickable = skuInfo["clickable"]
             salenum = skuInfo["salenum"]
             num = skuInfo["num"]
-            
+
             return 0, "", clickable, salenum, num
 
         except Exception:
