@@ -131,10 +131,7 @@ class ProductCli:
             try:
                 skuInfo = self.info.SkuList(projectId=projectId, screenId=screenId)
 
-                lists = {
-                    f"{self.YELLOW if sku['display_name'] == '预售中' else ''}{sku['name']} {sku['display_price']}元 ({sku['display_name']}){self.RESET}": sku
-                    for sku in skuInfo
-                }
+                lists = {f"{self.YELLOW if sku['display_name'] == '预售中' else ''}{sku['name']} {sku['display_price']}元 ({sku['display_name']}){self.RESET}": sku for sku in skuInfo}
                 select = self.data.Inquire(
                     type="List",
                     message="请选择价位",
