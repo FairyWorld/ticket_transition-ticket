@@ -27,6 +27,8 @@ class Info:
         net: 网络实例
         """
         self.net = net
+        
+        self.scene = "neul-next"
 
     def Project(self, projectId: int) -> dict:
         """
@@ -34,10 +36,8 @@ class Info:
 
         projectId: 项目ID
         """
-        res = self.net.Response(
-            method="get",
-            url=f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={projectId}",
-        )
+        url = f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={projectId}&project_id={projectId}&requestSource={self.scene}"
+        res = self.net.Response(method="get", url=url)
 
         base_info_id = 0
         for i, item in enumerate(res["data"]["performance_desc"]["list"]):
@@ -60,10 +60,8 @@ class Info:
 
         projectId: 项目ID
         """
-        res = self.net.Response(
-            method="get",
-            url=f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={projectId}",
-        )
+        url = f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={projectId}&project_id={projectId}&requestSource={self.scene}"
+        res = self.net.Response(method="get", url=url)
 
         screens = res["data"]["screen_list"]
         if not screens:
@@ -102,10 +100,8 @@ class Info:
 
         screenId: 场次ID
         """
-        res = self.net.Response(
-            method="get",
-            url=f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={projectId}",
-        )
+        url = f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={projectId}&project_id={projectId}&requestSource={self.scene}"
+        res = self.net.Response(method="get", url=url)
 
         for i in res["data"]["screen_list"]:
             if i["id"] == screenId:
@@ -122,6 +118,9 @@ class Info:
                 "display_price": f"{(sku['price'] / 100):.2f}",
                 "sale_start": sku["saleStart"],
                 "sale_end": sku["saleEnd"],
+                "clickable": sku["clickable"],
+                "salenum": sku["sale_flag_number"],
+                "num": sku["num"],
                 "act": {
                     "act_id": sku["discount_act"]["act_id"],
                     "act_type": sku["discount_act"]["act_type"],

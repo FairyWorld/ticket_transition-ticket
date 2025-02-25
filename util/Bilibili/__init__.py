@@ -62,8 +62,6 @@ class Bilibili:
         self.cost = cost
 
         self.scene = "neul-next"
-        self.screenPath = 0
-        self.skuPath = 0
 
         self.orderId = 0
         self.orderToken = ""
@@ -74,61 +72,6 @@ class Bilibili:
         self.contactNeed = False
         self.deliverFee = 0
         self.payment = 0
-
-    @logger.catch
-    def QuerySaleStartTime(self) -> tuple:
-        """
-        获取开票时间
-        """
-        try:
-            skuInfo = self.info.Sku(projectId=self.projectId, screenId=self.screenId, skuId=self.skuId, cost=self.cost)
-            return 0, skuInfo["sale_start"]
-        except Exception:
-            return 114514, 0
-
-    @logger.catch
-    def QueryToken(self) -> tuple:
-        """
-        获取Token
-        """
-        # 成功
-        if not self.risked:
-            url = f"https://show.bilibili.com/api/ticket/order/prepare?project_id={self.projectId}"
-
-        # 刚刚验证完
-        else:
-            url = f"https://show.bilibili.com/api/ticket/order/prepare?project_id={self.projectId}&token={self.token}&gaia_vtoken={self.token}"
-            self.risked = False
-
-        params = {
-            "project_id": self.projectId,
-            "screen_id": self.screenId,
-            "sku_id": self.skuId,
-            "count": self.count,
-            "order_type": self.orderType,
-            "token": "",
-            "requestSource": self.scene,
-        }
-        res = self.net.Response(method="post", url=url, params=params)
-        code = res["errno"]
-        msg = res["msg"]
-
-        match code:
-            # 成功
-            case 0:
-                self.token = res["data"]["token"]
-            # 验证
-            case -401:
-                riskParams = res["data"]["ga_data"]["riskParams"]
-                self.mid = riskParams["mid"]
-                self.decisionType = riskParams["decision_type"]
-                self.buvid = riskParams["buvid"]
-                self.ip = riskParams["ip"]
-                self.scene = riskParams["scene"]
-                self.ua = riskParams["ua"]
-                self.voucher = riskParams["v_voucher"]
-
-        return code, msg
 
     @logger.catch
     def RiskInfo(self) -> tuple:
@@ -219,45 +162,77 @@ class Bilibili:
         return code, msg
 
     @logger.catch
-    def QueryAmount(self) -> tuple:
+    def QuerySaleStartTime(self) -> tuple:
         """
-        获取票数
+        获取开票时间
         """
-        url = f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={self.projectId}&project_id={self.projectId}&requestSource={self.scene}"
-        res = self.net.Response(method="get", url=url)
+        try:
+            skuInfo = self.info.Sku(projectId=self.projectId, screenId=self.screenId, skuId=self.skuId, cost=self.cost)
+            return 0, skuInfo["sale_start"]
+
+        except Exception:
+            return 114514, 0
+
+    @logger.catch
+    def QueryToken(self) -> tuple:
+        """
+        获取Token
+        """
+        # 成功
+        if not self.risked:
+            url = f"https://show.bilibili.com/api/ticket/order/prepare?project_id={self.projectId}"
+
+        # 刚刚验证完
+        else:
+            url = f"https://show.bilibili.com/api/ticket/order/prepare?project_id={self.projectId}&token={self.token}&gaia_vtoken={self.token}"
+            self.risked = False
+
+        params = {
+            "project_id": self.projectId,
+            "screen_id": self.screenId,
+            "sku_id": self.skuId,
+            "count": self.count,
+            "order_type": self.orderType,
+            "token": "",
+            "requestSource": self.scene,
+        }
+        res = self.net.Response(method="post", url=url, params=params)
         code = res["errno"]
         msg = res["msg"]
 
         match code:
             # 成功
             case 0:
-                data = res["data"]
-                path = data["screen_list"][self.screenPath]["ticket_list"][self.skuPath]
+                self.token = res["data"]["token"]
+            # 验证
+            case -401:
+                riskParams = res["data"]["ga_data"]["riskParams"]
+                self.mid = riskParams["mid"]
+                self.decisionType = riskParams["decision_type"]
+                self.buvid = riskParams["buvid"]
+                self.ip = riskParams["ip"]
+                self.scene = riskParams["scene"]
+                self.ua = riskParams["ua"]
+                self.voucher = riskParams["v_voucher"]
 
-                # 有保存Sku位置
-                if path["id"] == self.skuId:
-                    clickable = path["clickable"]
-                    salenum = path["sale_flag_number"]
-                    num = path["num"]
+        return code, msg
 
-                # 没保存Sku位置
-                else:
-                    for i, screen in enumerate(data["screen_list"]):
-                        if screen["id"] == self.screenId:
-                            for j, sku in enumerate(screen["ticket_list"]):
-                                if sku["id"] == self.skuId:
-                                    clickable = sku["clickable"]
-                                    salenum = sku["sale_flag_number"]
-                                    num = sku["num"]
-                                    self.screenPath = i
-                                    self.skuPath = j
-                                    break
-            case _:
-                clickable = False
-                salenum = 4
-                num = 0
+    @logger.catch
+    def QueryAmount(self) -> tuple:
+        """
+        获取票数
+        """
+        try:
+            skuInfo = self.info.Sku(projectId=self.projectId, screenId=self.screenId, skuId=self.skuId, cost=self.cost)
+            
+            clickable = skuInfo["clickable"]
+            salenum = skuInfo["salenum"]
+            num = skuInfo["num"]
+            
+            return 0, "", clickable, salenum, num
 
-        return code, msg, clickable, salenum, num
+        except Exception:
+            return 114514, "", False, 4, 0
 
     @logger.catch
     def QueryParamInfo(self) -> None:
