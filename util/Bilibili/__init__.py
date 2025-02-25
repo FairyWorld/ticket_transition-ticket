@@ -49,29 +49,39 @@ class Bilibili:
         self.net = net
         self.info = Info(net=net)
 
+        self.scene = "neul-next"
+
         self.projectId = projectId
         self.screenId = screenId
         self.skuId = skuId
-        self.act = act
-        self.buyer = buyer
-        self.phone = phone
-        self.userinfo = userinfo
-
-        self.orderType = orderType
         self.count = count
         self.cost = cost
 
-        self.scene = "neul-next"
+        self.act = act
+        self.buyer = buyer
+        self.phone = phone
+        self.deliver = deliver
+        self.userinfo = userinfo
 
+        self.orderType = orderType
         self.orderId = 0
         self.orderToken = ""
+        self.token = ""
         self.risked = False
 
-        self.deliver = deliver
         self.deliverNeed = False
         self.contactNeed = False
         self.deliverFee = 0
         self.payment = 0
+
+        self.buvid = ""
+        self.decisionType = ""
+        self.ip = ""
+        self.mid = ""
+        self.ua = ""
+        self.voucher = ""
+        self.challenge = ""
+        self.gt = ""
 
     @logger.catch
     def RiskInfo(self) -> tuple:
