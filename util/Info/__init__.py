@@ -77,7 +77,6 @@ class Info:
                     "sale_start": screen["sale_start"],
                     "sale_end": screen["sale_end"],
                     "express_fee": screen["express_fee"],
-                    # "express_free_flag": screen["express_free_flag"],
                 }
             )
         return dist
