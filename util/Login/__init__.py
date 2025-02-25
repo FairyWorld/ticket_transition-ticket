@@ -11,7 +11,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from util import Captcha, Data, Request
+from util.Captcha import Captcha
+from util.Data import Data
+from util.Request import Request
 
 
 class LoginException(Exception):

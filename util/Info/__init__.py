@@ -1,6 +1,6 @@
 from loguru import logger
 
-from util import Request
+from util.Request import Request
 
 
 class InfoException(Exception):

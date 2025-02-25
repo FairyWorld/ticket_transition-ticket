@@ -7,7 +7,11 @@ from time import sleep, time
 from loguru import logger
 from transitions import Machine, State
 
-from util import Bilibili, Captcha, Data, Notice, Request
+from util.Bilibili import Bilibili
+from util.Captcha import Captcha
+from util.Data import Data
+from util.Notice import Notice
+from util.Request import Request
 
 
 class Task:

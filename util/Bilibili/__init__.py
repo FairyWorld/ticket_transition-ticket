@@ -5,7 +5,8 @@ from time import time
 
 from loguru import logger
 
-from util import Info, Request
+from util.Info import Info
+from util.Request import Request
 
 
 class Bilibili:
