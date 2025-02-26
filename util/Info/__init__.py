@@ -48,7 +48,9 @@ class Info:
         dist = {
             "id": res["data"]["id"],
             "name": res["data"]["name"],
-            "time": res["data"]["performance_desc"]["list"][base_info_id]["details"][0]["content"],
+            "time": res["data"]["performance_desc"]["list"][base_info_id]["details"][0][
+                "content"
+            ],
             "need_deliver": res["data"]["has_paper_ticket"],
             "need_contact": res["data"]["need_contact"],
         }
@@ -133,7 +135,13 @@ class Info:
             )
         return dist
 
-    def Sku(self, projectId: int, screenId: int, skuId: int, cost: int) -> dict:
+    def Sku(
+        self,
+        projectId: int,
+        screenId: int,
+        skuId: int,
+        cost: int,
+    ) -> dict:
         """
         票种信息
 
@@ -163,7 +171,10 @@ class Info:
         lists = res["data"]["list"]
 
         if not lists:
-            raise InfoException("购买人", "暂无购买人信息, 请到会员购平台绑定后再次使用!")
+            raise InfoException(
+                "购买人",
+                "暂无购买人信息, 请到会员购平台绑定后再次使用!",
+            )
 
         dist = []
         for info in lists:
@@ -202,7 +213,10 @@ class Info:
         lists = res["data"]["addr_list"]
 
         if not lists:
-            raise InfoException("收货地址", "暂无收货地址信息, 请到会员购平台绑定后再次使用!")
+            raise InfoException(
+                "收货地址",
+                "暂无收货地址信息, 请到会员购平台绑定后再次使用!",
+            )
 
         dist = []
         for info in lists:

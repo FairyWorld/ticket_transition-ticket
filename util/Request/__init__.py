@@ -69,7 +69,13 @@ class Request:
         logging.getLogger("httpx").setLevel(logging.CRITICAL)
 
     @logger.catch
-    def Response(self, method: str, url: str, params: dict = {}, isJson: bool = True) -> dict:
+    def Response(
+        self,
+        method: str,
+        url: str,
+        params: dict = {},
+        isJson: bool = True,
+    ) -> dict:
         """
         网络
 
@@ -108,7 +114,11 @@ class Request:
                 )
                 return {}
 
-        except (httpx.RequestError, httpx.HTTPStatusError, httpx.StreamError) as e:
+        except (
+            httpx.RequestError,
+            httpx.HTTPStatusError,
+            httpx.StreamError,
+        ) as e:
             return {
                 "code": 114514,
                 "errno": 114514,
@@ -147,7 +157,9 @@ class Request:
         """
         # 调试模式
         if self.isDebug:
-            logger.debug(f"【Request请求】地址: {request.url} 方法: {request.method} 内容: {request.content} 请求参数: {request.read()}")
+            logger.debug(
+                f"【Request请求】地址: {request.url} 方法: {request.method} 内容: {request.content} 请求参数: {request.read()}"
+            )
 
     @logger.catch
     def ResponseHook(self, response: httpx.Response) -> None:
@@ -157,12 +169,16 @@ class Request:
         request = response.request
         # 调试模式
         if self.isDebug:
-            logger.debug(f"【Request响应】地址: {request.url} 状态码: {response.status_code} 返回: {response.read()}")
+            logger.debug(
+                f"【Request响应】地址: {request.url} 状态码: {response.status_code} 返回: {response.read()}"
+            )
 
         # 错误
         if response.status_code != 200:
             if response.status_code == 412:
-                logger.error(f"【Request响应】IP被B站封禁(412风控)!!!!! 下面暂停工作{self.rest}秒, 请更换IP后再次使用(重启路由器/使用手机流量热点/代理...)")
+                logger.error(
+                    f"【Request响应】IP被B站封禁(412风控)!!!!! 下面暂停工作{self.rest}秒, 请更换IP后再次使用(重启路由器/使用手机流量热点/代理...)"
+                )
                 sleep(self.rest)
 
             # 等于100001

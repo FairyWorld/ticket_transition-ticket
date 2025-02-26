@@ -68,7 +68,12 @@ class Notice:
         import pyaudio
 
         p = pyaudio.PyAudio()
-        stream = p.open(format=pyaudio.paInt16, channels=1, rate=44100, output=True)
+        stream = p.open(
+            format=pyaudio.paInt16,
+            channels=1,
+            rate=44100,
+            output=True,
+        )
 
         with open(self.audioPath, "rb") as audio_file:
             audio_data = audio_file.read()
@@ -115,7 +120,10 @@ class Notice:
         微信
         """
         url = f"https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key={token}"
-        data = {"msgtype": "text", "text": {"content": self.message}}
+        data = {
+            "msgtype": "text",
+            "text": {"content": self.message},
+        }
         self.net.Response(method="post", url=url, params=data)
 
     @logger.catch
@@ -124,7 +132,11 @@ class Notice:
         方糖
         """
         url = f"https://sctapi.ftqq.com/{token}.send"
-        data = {"title": self.title, "desp": self.message, "noip": 1}
+        data = {
+            "title": self.title,
+            "desp": self.message,
+            "noip": 1,
+        }
         self.net.Response(method="post", url=url, params=data)
 
     @logger.catch

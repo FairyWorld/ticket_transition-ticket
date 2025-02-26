@@ -52,14 +52,21 @@ class UserCli:
         if selects[-1] != "新建用户配置":
             selects.append("新建用户配置")
 
-        select = self.data.Inquire(type="List", message="请选择加载的用户配置", choices=selects)
+        select = self.data.Inquire(
+            type="List",
+            message="请选择加载的用户配置",
+            choices=selects,
+        )
 
         if select == "新建用户配置":
             return self.Generate()
 
         else:
             self.config = self.conf.Load(filename=select, decrypt=self.isEncrypt)
-            net = Request(cookie=self.config["cookie"], header=self.config["header"])
+            net = Request(
+                cookie=self.config["cookie"],
+                header=self.config["header"],
+            )
             Login(net=net).Status()
             return self.config
 
@@ -78,7 +85,13 @@ class UserCli:
             mode = self.data.Inquire(
                 type="List",
                 message="请选择B站账号登录模式",
-                choices=["扫描二维码", "浏览器登录", "账号密码登录", "手机验证码登录", "手动输入Cookie"],
+                choices=[
+                    "扫描二维码",
+                    "浏览器登录",
+                    "账号密码登录",
+                    "手机验证码登录",
+                    "手动输入Cookie",
+                ],
                 # choices=["扫描二维码", "浏览器登录", "账号密码登录", "手动输入Cookie"],
             )
 
@@ -113,7 +126,11 @@ class UserCli:
                                 type="Text",
                                 message="请输入验证码",
                             )
-                            return login.SMSVerify(tel=tel, code=code, captcha_key=captcha_key)
+                            return login.SMSVerify(
+                                tel=tel,
+                                code=code,
+                                captcha_key=captcha_key,
+                            )
                         else:
                             raise LoginException("验证码发送失败!")
 
@@ -138,7 +155,10 @@ class UserCli:
             """
             try:
                 buyerInfo = self.info.Buyer()
-                choice = {f"{i['购买人']} - {i['身份证']} - {i['手机号']}": x for x, i in enumerate(buyerInfo)}
+                choice = {
+                    f"{i['购买人']} - {i['身份证']} - {i['手机号']}": x
+                    for x, i in enumerate(buyerInfo)
+                }
 
                 select = self.data.Inquire(
                     type="Checkbox",
@@ -168,7 +188,10 @@ class UserCli:
             """
             try:
                 deliver = self.info.Deliver()
-                choice = {f"{i['name']} - {i['phone']} - {i['addr']}": x for x, i in enumerate(deliver)}
+                choice = {
+                    f"{i['name']} - {i['phone']} - {i['addr']}": x
+                    for x, i in enumerate(deliver)
+                }
 
                 select = self.data.Inquire(
                     type="List",

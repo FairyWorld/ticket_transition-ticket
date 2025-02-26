@@ -60,7 +60,11 @@ class Login:
 
         文档: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/login/login_action/QR.md
         """
-        self.net.Response(method="get", url="https://www.bilibili.com/", isJson=False)
+        self.net.Response(
+            method="get",
+            url="https://www.bilibili.com/",
+            isJson=False,
+        )
 
         resp = self.net.Response(
             method="get",
@@ -76,7 +80,8 @@ class Login:
                 time.sleep(0.5)
                 respQR = self.net.Response(
                     method="get",
-                    url="https://passport.bilibili.com/x/passport-login/web/qrcode/poll?source=main-fe-header&qrcode_key=" + resp["data"]["qrcode_key"],
+                    url="https://passport.bilibili.com/x/passport-login/web/qrcode/poll?source=main-fe-header&qrcode_key="
+                    + resp["data"]["qrcode_key"],
                 )
 
                 check = respQR["data"]
@@ -129,7 +134,9 @@ class Login:
             try:
                 driver.get("https://show.bilibili.com/")
                 wait = WebDriverWait(driver, 30)
-                event = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "nav-header-register")))
+                event = wait.until(
+                    EC.element_to_be_clickable((By.CLASS_NAME, "nav-header-register"))
+                )
                 driver.execute_script("arguments[0].click();", event)
                 break
 
@@ -309,13 +316,18 @@ class Login:
             reverify = self.net.Response(method="post", url=url, params=data)
 
             if reverify["code"] != 0:
-                raise LoginException(f"验证码登录失败 {reverify['code']}: {reverify['message']}")
+                raise LoginException(
+                    f"验证码登录失败 {reverify['code']}: {reverify['message']}"
+                )
 
             logger.success("【登录】验证码登录成功")
             self.net.Response(
                 method="post",
                 url="https://passport.bilibili.com/x/passport-login/web/exchange_cookie",
-                params={"source": "risk", "code": reverify["data"]["code"]},
+                params={
+                    "source": "risk",
+                    "code": reverify["data"]["code"],
+                },
             )
             self.cookie = self.net.GetCookie()
             return self.Status()
@@ -405,7 +417,10 @@ class Login:
         self.net.RefreshCookie(self.cookie)
 
         if self.isCheckStatus:
-            user = self.net.Response(method="get", url="https://api.bilibili.com/x/web-interface/nav")
+            user = self.net.Response(
+                method="get",
+                url="https://api.bilibili.com/x/web-interface/nav",
+            )
 
             if user["data"]["isLogin"]:
                 return self.cookie

@@ -177,7 +177,12 @@ class Bilibili:
         获取开票时间
         """
         try:
-            skuInfo = self.info.Sku(projectId=self.projectId, screenId=self.screenId, skuId=self.skuId, cost=self.cost)
+            skuInfo = self.info.Sku(
+                projectId=self.projectId,
+                screenId=self.screenId,
+                skuId=self.skuId,
+                cost=self.cost,
+            )
             return 0, skuInfo["sale_start"]
 
         except Exception:
@@ -233,7 +238,12 @@ class Bilibili:
         获取票数
         """
         try:
-            skuInfo = self.info.Sku(projectId=self.projectId, screenId=self.screenId, skuId=self.skuId, cost=self.cost)
+            skuInfo = self.info.Sku(
+                projectId=self.projectId,
+                screenId=self.screenId,
+                skuId=self.skuId,
+                cost=self.cost,
+            )
 
             clickable = skuInfo["clickable"]
             salenum = skuInfo["salenum"]
@@ -329,7 +339,10 @@ class Bilibili:
                 tmp = self.net.Response(
                     method="post",
                     url="https://show.bilibili.com/api/ticket/buyer/saveContactInfo",
-                    params={"username": self.userinfo["username"], "tel": self.phone},
+                    params={
+                        "username": self.userinfo["username"],
+                        "tel": self.phone,
+                    },
                 )
                 if tmp["errno"] == 0:
                     self.contactNeed = True

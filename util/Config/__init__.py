@@ -46,7 +46,11 @@ class Config:
 
         filename: 文件名
         """
-        filename = re.sub(r'[\\/*:?<>|"]', lambda m: "'" if m.group() == '"' else " ", filename)
+        filename = re.sub(
+            r'[\\/*:?<>|"]',
+            lambda m: "'" if m.group() == '"' else " ",
+            filename,
+        )
         filename = re.sub(r"\s+", " ", filename).strip()
         return filename
 
@@ -102,7 +106,11 @@ class Config:
         encrypt: 是否加密
         """
         try:
-            with open(f"{self.dir}/{self.filename_format(filename)}.yaml", "w", encoding="utf-8") as file:
+            with open(
+                f"{self.dir}/{self.filename_format(filename)}.yaml",
+                "w",
+                encoding="utf-8",
+            ) as file:
                 if encrypt:
                     yaml_str = self.dict_to_yaml_str(data)
                     encrypted_yaml_str = Data().AESEncrypt(yaml_str)

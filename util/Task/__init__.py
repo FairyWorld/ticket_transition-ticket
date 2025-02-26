@@ -86,7 +86,10 @@ class Task:
             State(name="验证码", on_enter="RiskProcessAction"),
             State(name="等待余票", on_enter="QueryTicketAction"),
             State(name="创建订单", on_enter="CreateOrderAction"),
-            State(name="创建订单状态", on_enter="CreateStatusAction"),
+            State(
+                name="创建订单状态",
+                on_enter="CreateStatusAction",
+            ),
             State(name="完成", on_enter="FinishAction"),
         ]
 
@@ -165,7 +168,10 @@ class Task:
             # 有票
             conditions=lambda: self.queryTicketCode
             # 超过定时刷新时间
-            or not self.data.TimestampCheck(timestamp=self.refreshTime, duration=self.refreshInterval),
+            or not self.data.TimestampCheck(
+                timestamp=self.refreshTime,
+                duration=self.refreshInterval,
+            ),
         )
         self.machine.add_transition(
             trigger="QueryTicket",
@@ -204,14 +210,24 @@ class Task:
             # 失败重试
             conditions=lambda: self.createOrderCode in [429, 100001]
             # 冲刺模式
-            or self.data.TimestampCheck(timestamp=self.availableTime, duration=self.availableSchedule[-1][0]),
+            or self.data.TimestampCheck(
+                timestamp=self.availableTime,
+                duration=self.availableSchedule[-1][0],
+            ),
         )
         self.machine.add_transition(
             trigger="CreateOrder",
             source="创建订单",
             dest="等待余票",
             # 非预定情况
-            conditions=lambda: self.createOrderCode not in [0, 100079, 429, 100001, *range(100050, 100060)],
+            conditions=lambda: self.createOrderCode
+            not in [
+                0,
+                100079,
+                429,
+                100001,
+                *range(100050, 100060),
+            ],
         )
 
         # 创建订单状态结束
@@ -247,7 +263,9 @@ class Task:
         match code:
             # 成功
             case 0:
-                logger.info(f"【获取开票时间】开票时间为 {self.data.TimestampFormat(int(start_time))}, 当前时间为 {self.data.TimestampFormat(int(time()))}")
+                logger.info(
+                    f"【获取开票时间】开票时间为 {self.data.TimestampFormat(int(start_time))}, 当前时间为 {self.data.TimestampFormat(int(time()))}"
+                )
 
             # 不知道
             case _:
@@ -413,7 +431,9 @@ class Task:
                             logger.info("【等待余票】暂时售罄, 等待放票!")
 
                         case _:
-                            logger.warning(f"【等待余票】可点击状态{clickable} 状态{salenum} 数量{num}, 可下单状态{self.queryTicketCode}")
+                            logger.warning(
+                                f"【等待余票】可点击状态{clickable} 状态{salenum} 数量{num}, 可下单状态{self.queryTicketCode}"
+                            )
 
                 # 不可购
                 else:
@@ -461,7 +481,9 @@ class Task:
 
             # 硬控
             case 3:
-                logger.error("【创建订单】ERR 3! 请不要开多个脚本给同一实名制购票人(身份证)抢票, 否则会被B站限流")
+                logger.error(
+                    "【创建订单】ERR 3! 请不要开多个脚本给同一实名制购票人(身份证)抢票, 否则会被B站限流"
+                )
                 # 刷新
                 self.AutoSleepInterval()
 
@@ -538,7 +560,10 @@ class Task:
         抢票完成
         """
         url = f"https://show.bilibili.com/platform/orderDetail.html?order_id={self.api.orderId}"
-        notice = Notice(title="抢票", message=f"下单成功! 请在十分钟内支付, 链接:{url}")
+        notice = Notice(
+            title="抢票",
+            message=f"下单成功! 请在十分钟内支付, 链接:{url}",
+        )
         logger.success(f"【完成】下单成功! 请在十分钟内支付, 链接:{url}")
         webbrowser.open(url)
 
@@ -546,7 +571,10 @@ class Task:
         noticeThread = []
         t1 = threading.Thread(target=notice.Message)
         t2 = threading.Thread(target=notice.Sound)
-        t3 = threading.Thread(target=notice.PushPlus, args=(self.notice["pushplus"],))
+        t3 = threading.Thread(
+            target=notice.PushPlus,
+            args=(self.notice["pushplus"],),
+        )
         t4 = threading.Thread(target=notice.Ding, args=(self.notice["dingding"],))
         t5 = threading.Thread(target=notice.WX, args=(self.notice["wx"],))
         t6 = threading.Thread(target=notice.FTQQ, args=(self.notice["ftqq"],))
@@ -580,12 +608,17 @@ class Task:
         自动Sleep策略
         """
         # 票仓有票时
-        if self.data.TimestampCheck(timestamp=self.availableTime, duration=self.availableSchedule[-1][0]):
+        if self.data.TimestampCheck(
+            timestamp=self.availableTime,
+            duration=self.availableSchedule[-1][0],
+        ):
             for i in range(len(self.availableSchedule) - 1):
                 start = self.availableSchedule[i][0]
                 end = self.availableSchedule[i + 1][0]
                 # 超过start, 未满足end
-                if not self.data.TimestampCheck(timestamp=self.availableTime, duration=start) and self.data.TimestampCheck(timestamp=self.availableTime, duration=end):
+                if not self.data.TimestampCheck(
+                    timestamp=self.availableTime, duration=start
+                ) and self.data.TimestampCheck(timestamp=self.availableTime, duration=end):
                     sleepTime = self.availableSchedule[i + 1][1]
                     break
 
