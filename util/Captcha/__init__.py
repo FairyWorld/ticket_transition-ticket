@@ -2,7 +2,6 @@ import sys
 from os import getcwd, path
 from time import sleep
 
-import browsers
 from loguru import logger
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -80,54 +79,38 @@ class Captcha:
         challenge: 流水号
         返回: validate
         """
-        browser_list = [i for i in list(browsers.browsers()) if i["browser_type"] != "msie"]
+        driver = webdriver.Edge()
 
-        if not browser_list:
-            logger.error("【验证】未找到可用浏览器/WebDriver! 建议选择其他方式登录")
+        if not driver:
+            logger.error("【验证】浏览器尝试启动失败")
 
-        selenium_drivers = {
-            "chrome": webdriver.Chrome,
-            "firefox": webdriver.Firefox,
-            "msedge": webdriver.Edge,
-            "safari": webdriver.Safari,
-        }
+        driver.maximize_window()
+        try:
+            filepath = (
+                "file://" + self.geetest_path + "?gt=" + self.gt + "&challenge=" + challenge
+            )
+            driver.get(filepath)
+            wait = WebDriverWait(driver, 30)
 
-        for browser in browser_list:
-            browser_type = browser["browser_type"]
-            print("请从打开的浏览器中手动验证, 获取极验校验值")
-            print("建议点选文字时, 持续两秒以上, 以保证能通过校验")
-            driver = selenium_drivers[browser_type]()
+            event_btn = wait.until(EC.element_to_be_clickable((By.ID, "btn-gen")))
+            driver.execute_script("arguments[0].click();", event_btn)
+            sleep(0.8)
+            event_cap = wait.until(
+                EC.element_to_be_clickable((By.CLASS_NAME, "geetest_btn"))
+            )
+            driver.execute_script("arguments[0].click();", event_cap)
 
-            if not driver:
-                logger.error("【验证】所有浏览器/WebDriver尝试登录均失败")
+            event_inp = wait.until(EC.visibility_of_element_located((By.ID, "validate")))
 
-            driver.maximize_window()
-            try:
-                filepath = (
-                    "file://" + self.geetest_path + "?gt=" + self.gt + "&challenge=" + challenge
-                )
-                driver.get(filepath)
-                wait = WebDriverWait(driver, 30)
+            while True:
+                validate = event_inp.get_attribute("value")
+                if validate:
+                    break
+            return validate
 
-                event_btn = wait.until(EC.element_to_be_clickable((By.ID, "btn-gen")))
-                driver.execute_script("arguments[0].click();", event_btn)
-                sleep(0.8)
-                event_cap = wait.until(
-                    EC.element_to_be_clickable((By.CLASS_NAME, "geetest_btn"))
-                )
-                driver.execute_script("arguments[0].click();", event_cap)
-
-                event_inp = wait.until(EC.visibility_of_element_located((By.ID, "validate")))
-
-                while True:
-                    validate = event_inp.get_attribute("value")
-                    if validate:
-                        break
-                return validate
-
-            except Exception as e:
-                logger.error(f"【验证】{e}")
-                driver.quit()
+        except Exception as e:
+            logger.error(f"【验证】{e}")
+            driver.quit()
 
         return ""
 

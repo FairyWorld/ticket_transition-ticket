@@ -111,7 +111,7 @@ class Login:
         driver = webdriver.Edge()
 
         if not driver:
-            raise LoginException("所有浏览器/WebDriver尝试登录均失败")
+            raise LoginException("浏览器尝试启动失败")
 
         driver.maximize_window()
         try:
