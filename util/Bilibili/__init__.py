@@ -69,6 +69,7 @@ class Bilibili:
         self.token = ""
         self.risked = False
 
+        self.saleStart = 0
         self.deliverNeed = False
         self.contactNeed = False
         self.deliverFee = 0
@@ -183,6 +184,7 @@ class Bilibili:
                 skuId=self.skuId,
                 cost=self.cost,
             )
+            self.saleStart = skuInfo["sale_start"] * 1000
             return 0, skuInfo["sale_start"]
 
         except Exception:
@@ -276,12 +278,15 @@ class Bilibili:
         """
         创建订单
         """
-        url = f"https://show.bilibili.com/api/ticket/order/createV2?project_id={self.projectId}"
+        url = f"https://show.bilibili.com/api/ticket/order/createV2"
         timestamp = int(round(time() * 1000))
         clickPosition = {
-            "x": randint(1300, 1500),
-            "y": randint(20, 100),
-            "origin": timestamp - randint(2500, 10000),
+            # "x": randint(1300, 1500),
+            "x": randint(200, 400),
+            # "y": randint(20, 100),
+            "y": randint(580, 620),
+            # "origin": timestamp - randint(1500, 10000),
+            "origin": max(self.saleStart, timestamp - randint(1500, 10000)),
             "now": timestamp,
         }
         params = {
