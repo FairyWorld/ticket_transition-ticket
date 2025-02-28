@@ -515,7 +515,7 @@ class Task:
             # 失败
             case _:
                 if msg == "请求错误: 429":
-                    logger.warning("【创建订单】429! 服务器卡卡卡咔咔咔咔卡卡卡(无需在意)")
+                    logger.warning("【创建订单】429! 服务器卡卡卡咔咔咔咔卡卡卡")
                     self.createOrderCode = 429
                 else:
                     logger.error(f"【创建订单】{self.createOrderCode}: {msg}")
