@@ -263,9 +263,8 @@ class Task:
         match code:
             # 成功
             case 0:
-                logger.info(
-                    f"【获取开票时间】开票时间为 {self.data.TimestampFormat(int(start_time))}, 当前时间为 {self.data.TimestampFormat(int(time()))}"
-                )
+                logger.info(f"【获取开票时间】开票时间为 {self.data.TimestampFormat(int(start_time))}")
+                logger.info(f"【获取开票时间】当前时间为 {self.data.TimestampFormat(int(time()))}")
 
             # 不知道
             case _:

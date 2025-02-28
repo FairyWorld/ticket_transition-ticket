@@ -79,7 +79,7 @@ class ProductCli:
             """
             活动
             """
-            print(f"{self.BLUE}[{self.YELLOW}!{self.BLUE}]{self.RESET}")
+            # print(f"{self.BLUE}[{self.YELLOW}!{self.BLUE}]{self.RESET} 近期活动: show.bilibili.com/platform/detail.html?id=114514")
             url = self.data.Inquire(
                 type="Text",
                 message="请粘贴要抢的活动的网页链接",
