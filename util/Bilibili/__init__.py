@@ -278,7 +278,7 @@ class Bilibili:
         """
         创建订单
         """
-        url = f"https://show.bilibili.com/api/ticket/order/createV2"
+        url = "https://show.bilibili.com/api/ticket/order/createV2"
         timestamp = int(round(time() * 1000))
         clickPosition = {
             # "x": randint(1300, 1500),
@@ -360,7 +360,7 @@ class Bilibili:
         """
         创建订单状态
         """
-        url = f"https://show.bilibili.com/api/ticket/order/createstatus"
+        url = "https://show.bilibili.com/api/ticket/order/createstatus"
         params = {
             "token": self.orderToken,
             "project_id": self.projectId,
@@ -380,7 +380,7 @@ class Bilibili:
         """
         获取订单状态
         """
-        url = f"https://show.bilibili.com/api/ticket/order/info"
+        url = "https://show.bilibili.com/api/ticket/order/info"
         params = {
             "order_id": self.orderId,
         }

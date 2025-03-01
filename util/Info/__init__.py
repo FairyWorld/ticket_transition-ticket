@@ -36,7 +36,7 @@ class Info:
 
         projectId: 项目ID
         """
-        url = f"https://show.bilibili.com/api/ticket/project/getV2"
+        url = "https://show.bilibili.com/api/ticket/project/getV2"
         params = {
             "version": "134",
             "id": projectId,
@@ -68,7 +68,7 @@ class Info:
 
         projectId: 项目ID
         """
-        url = f"https://show.bilibili.com/api/ticket/project/getV2"
+        url = "https://show.bilibili.com/api/ticket/project/getV2"
         params = {
             "version": "134",
             "id": projectId,
@@ -115,7 +115,7 @@ class Info:
 
         screenId: 场次ID
         """
-        url = f"https://show.bilibili.com/api/ticket/project/getV2"
+        url = "https://show.bilibili.com/api/ticket/project/getV2"
         params = {
             "version": "134",
             "id": projectId,

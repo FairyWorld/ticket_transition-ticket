@@ -95,9 +95,7 @@ class Captcha:
             event_btn = wait.until(EC.element_to_be_clickable((By.ID, "btn-gen")))
             driver.execute_script("arguments[0].click();", event_btn)
             sleep(0.8)
-            event_cap = wait.until(
-                EC.element_to_be_clickable((By.CLASS_NAME, "geetest_btn"))
-            )
+            event_cap = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "geetest_btn")))
             driver.execute_script("arguments[0].click();", event_cap)
 
             event_inp = wait.until(EC.visibility_of_element_located((By.ID, "validate")))
