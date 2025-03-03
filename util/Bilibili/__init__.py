@@ -282,9 +282,9 @@ class Bilibili:
         timestamp = int(round(time() * 1000))
         clickPosition = {
             # "x": randint(1300, 1500),
-            "x": randint(200, 400),
+            "x": randint(600, 1000),
             # "y": randint(20, 100),
-            "y": randint(580, 620),
+            "y": randint(2400, 2500),
             # "origin": timestamp - randint(1500, 10000),
             "origin": max(self.saleStart, timestamp - randint(1500, 10000)),
             "now": timestamp,
