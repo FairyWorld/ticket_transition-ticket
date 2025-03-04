@@ -120,7 +120,6 @@ class Bilibili:
                         dist = self.challenge
                     case "phone":
                         dist = data["phone"]["tel"]
-
                     case _:
                         dist = ""
             case _:
@@ -148,14 +147,12 @@ class Bilibili:
                     "token": self.token,
                     "validate": validate,
                 }
-
             case "phone":
                 params = {
                     "code": self.phone,
                     "csrf": self.net.GetCookie()["bili_jct"],
                     "token": self.token,
                 }
-
             case _:
                 params = {}
                 logger.error("【验证】这是什么验证类型?")
@@ -178,18 +175,21 @@ class Bilibili:
         """
         获取开票时间
         """
-        try:
-            skuInfo = self.info.Sku(
-                projectId=self.projectId,
-                screenId=self.screenId,
-                skuId=self.skuId,
-                cost=self.cost,
-            )
-            self.saleStart = skuInfo["sale_start"] * 1000
-            return 0, skuInfo["sale_start"]
+        code, msg, skuInfo = self.info.Sku(
+            projectId=self.projectId,
+            screenId=self.screenId,
+            skuId=self.skuId,
+            cost=self.cost,
+        )
 
-        except Exception:
-            return 114514, 0
+        match code:
+            # 成功
+            case 0:
+                saleStart = skuInfo["sale_start"]
+            case _:
+                saleStart = 0
+
+        return code, msg, saleStart
 
     @logger.catch
     def QueryToken(self) -> tuple:
@@ -282,8 +282,8 @@ class Bilibili:
         p2 = encrypt(self.projectId, "projectId")
         p3 = encrypt(self.screenId, "screenId")
         p4 = encrypt(self.skuId, "skuId")
-
         token = "w" + p1 + "AA" + p2 + "AA" + p3 + "EAAQAJ" + p4 + "."
+
         return token
 
     @logger.catch
@@ -291,22 +291,25 @@ class Bilibili:
         """
         获取票数
         """
-        try:
-            skuInfo = self.info.Sku(
-                projectId=self.projectId,
-                screenId=self.screenId,
-                skuId=self.skuId,
-                cost=self.cost,
-            )
+        code, msg, skuInfo = self.info.Sku(
+            projectId=self.projectId,
+            screenId=self.screenId,
+            skuId=self.skuId,
+            cost=self.cost,
+        )
 
-            clickable = skuInfo["clickable"]
-            salenum = skuInfo["salenum"]
-            num = skuInfo["num"]
+        match code:
+            # 成功
+            case 0:
+                clickable = skuInfo["clickable"]
+                salenum = skuInfo["salenum"]
+                num = skuInfo["num"]
+            case _:
+                clickable = False
+                salenum = 4
+                num = 0
 
-            return 0, "", clickable, salenum, num
-
-        except Exception:
-            return 114514, "", False, 4, 0
+        return code, msg, clickable, salenum, num
 
     @logger.catch
     def QueryParamInfo(self) -> None:
@@ -319,7 +322,9 @@ class Bilibili:
         """
         _, _, projectInfo = self.info.Project(projectId=self.projectId)
         _, _, screenInfo = self.info.Screen(projectId=self.projectId, screenId=self.screenId)
+        _, _, skuInfo = self.info.Sku(projectId=self.projectId, screenId=self.screenId, skuId=self.skuId, cost=self.cost)
 
+        self.saleStart = skuInfo["sale_start"] * 1000
         self.deliverNeed = projectInfo["need_deliver"]
         self.contactNeed = not projectInfo["need_contact"]
         self.deliverFee = max(screenInfo["express_fee"], 0)
@@ -438,4 +443,7 @@ class Bilibili:
             "order_id": self.orderId,
         }
         res = self.net.Response(method="get", url=url, params=params)
-        return res["errno"], res["msg"]
+        code = res["errno"]
+        msg = res["msg"]
+
+        return code, msg

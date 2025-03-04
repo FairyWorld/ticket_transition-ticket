@@ -105,6 +105,7 @@ class Info:
                     )
             case _:
                 dist = []
+
         return code, msg, dist
 
     def SkuList(self, projectId: int, screenId: int) -> tuple[int, str, list[dict]]:
@@ -156,23 +157,25 @@ class Info:
                     )
             case _:
                 dist = []
+
         return code, msg, dist
 
-    def Screen(self, projectId: int, screenId: int) -> dict:
+    def Screen(self, projectId: int, screenId: int) -> tuple[int, str, dict]:
         """
         场次信息
 
         projectId: 项目ID
         screenId: 场次ID
         """
-        _, _, screens = self.ScreenList(projectId=projectId)
+        code, msg, screens = self.ScreenList(projectId=projectId)
 
         for screen in screens:
             if screen["id"] == screenId:
-                return screen
+                return code, msg, screen
+
         raise InfoException("场次查询", "指定场次不存在")
 
-    def Sku(self, projectId: int, screenId: int, skuId: int, cost: int) -> dict:
+    def Sku(self, projectId: int, screenId: int, skuId: int, cost: int) -> tuple[int, str, dict]:
         """
         票种信息
 
@@ -181,11 +184,12 @@ class Info:
         skuId: 票档ID
         cost: 价格
         """
-        _, _, skus = self.SkuList(projectId=projectId, screenId=screenId)
+        code, msg, skus = self.SkuList(projectId=projectId, screenId=screenId)
 
         for sku in skus:
             if sku["id"] == skuId and sku["price"] == cost:
-                return sku
+                return code, msg, sku
+
         raise InfoException("场次查询", "指定票种不存在")
 
     def Buyer(self) -> list:
