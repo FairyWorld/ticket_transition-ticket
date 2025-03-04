@@ -107,9 +107,9 @@ class ProductCli:
                 screenInfo = self.info.ScreenList(projectId=projectId)
 
                 lists = {
-                    f"{self.YELLOW if screen['display_name'] == '预售中' else ''}{screen['name']} ({screen['display_name']}){self.RESET if screen['display_name'] == '预售中' else ''}": screen[
-                        "id"
-                    ]
+                    f"{self.YELLOW if screen['display_name'] == '预售中' else ''}"
+                    f"{screen['name']} ({screen['display_name']})"
+                    f"{self.RESET if screen['display_name'] == '预售中' else ''}": screen["id"]
                     for screen in screenInfo
                 }
                 select = self.data.Inquire(
@@ -136,7 +136,9 @@ class ProductCli:
                 skuInfo = self.info.SkuList(projectId=projectId, screenId=screenId)
 
                 lists = {
-                    f"{self.YELLOW if sku['display_name'] == '预售中' else ''}{sku['name']} {sku['display_price']}元 ({sku['display_name']}){self.RESET}": sku
+                    f"{self.YELLOW if sku['display_name'] == '预售中' else ''}"
+                    f"{sku['name']} {sku['display_price']}元 ({sku['display_name']})"
+                    f"{self.RESET if sku['display_name'] == '预售中' else ''}": sku
                     for sku in skuInfo
                 }
                 select = self.data.Inquire(
@@ -177,10 +179,7 @@ class ProductCli:
 
         self.config["screenId"] = ScreenStep(projectId=self.config["projectId"])
 
-        skuId, skuSelected, cost, act = SkuStep(
-            projectId=self.config["projectId"],
-            screenId=self.config["screenId"],
-        )
+        skuId, skuSelected, cost, act = SkuStep(projectId=self.config["projectId"], screenId=self.config["screenId"])
         self.config["skuId"] = skuId
         self.config["cost"] = cost
         self.config["act"] = act

@@ -86,10 +86,7 @@ class Task:
             State(name="验证码", on_enter="RiskProcessAction"),
             State(name="等待余票", on_enter="QueryTicketAction"),
             State(name="创建订单", on_enter="CreateOrderAction"),
-            State(
-                name="创建订单状态",
-                on_enter="CreateStatusAction",
-            ),
+            State(name="创建订单状态", on_enter="CreateStatusAction"),
             State(name="完成", on_enter="FinishAction"),
         ]
 
@@ -263,12 +260,8 @@ class Task:
         match code:
             # 成功
             case 0:
-                logger.info(
-                    f"【获取开票时间】开票时间为 {self.data.TimestampFormat(int(start_time))}"
-                )
-                logger.info(
-                    f"【获取开票时间】当前时间为 {self.data.TimestampFormat(int(time()))}"
-                )
+                logger.info(f"【获取开票时间】开票时间为 {self.data.TimestampFormat(int(start_time))}")
+                logger.info(f"【获取开票时间】当前时间为 {self.data.TimestampFormat(int(time()))}")
 
             # 不知道
             case _:
@@ -438,9 +431,7 @@ class Task:
                             logger.info("【等待余票】暂时售罄, 等待放票!")
 
                         case _:
-                            logger.warning(
-                                f"【等待余票】可点击状态{clickable} 状态{salenum} 数量{num}, 可下单状态{self.queryTicketCode}"
-                            )
+                            logger.warning(f"【等待余票】可点击状态{clickable} 状态{salenum} 数量{num}, 可下单状态{self.queryTicketCode}")
 
                 # 不可购
                 else:
@@ -488,9 +479,7 @@ class Task:
 
             # 硬控
             case 3:
-                logger.error(
-                    "【创建订单】ERR 3! 请不要开多个脚本给同一实名制购票人(身份证)抢票, 否则会被B站限流"
-                )
+                logger.error("【创建订单】ERR 3! 请不要开多个脚本给同一实名制购票人(身份证)抢票, 否则会被B站限流")
                 # 刷新
                 self.AutoSleepInterval()
 
@@ -578,15 +567,12 @@ class Task:
         noticeThread = []
         t1 = threading.Thread(target=notice.Message)
         t2 = threading.Thread(target=notice.Sound)
-        t3 = threading.Thread(
-            target=notice.PushPlus,
-            args=(self.notice["pushplus"],),
-        )
-        t4 = threading.Thread(target=notice.Ding, args=(self.notice["dingding"],))
-        t5 = threading.Thread(target=notice.WX, args=(self.notice["wx"],))
-        t6 = threading.Thread(target=notice.FTQQ, args=(self.notice["ftqq"],))
-        t7 = threading.Thread(target=notice.Bark, args=(self.notice["bark"],))
-        t8 = threading.Thread(target=notice.Mail, args=(self.notice["smtp"],))
+        t3 = threading.Thread(target=notice.PushPlus, args=(self.notice["pushplus"]))
+        t4 = threading.Thread(target=notice.Ding, args=(self.notice["dingding"]))
+        t5 = threading.Thread(target=notice.WX, args=(self.notice["wx"]))
+        t6 = threading.Thread(target=notice.FTQQ, args=(self.notice["ftqq"]))
+        t7 = threading.Thread(target=notice.Bark, args=(self.notice["bark"]))
+        t8 = threading.Thread(target=notice.Mail, args=(self.notice["smtp"]))
 
         if self.notice["system"]:
             noticeThread.append(t1)
@@ -623,11 +609,10 @@ class Task:
                 start = self.availableSchedule[i][0]
                 end = self.availableSchedule[i + 1][0]
                 # 超过start, 未满足end
-                if not self.data.TimestampCheck(
-                    timestamp=self.availableTime, duration=start
-                ) and self.data.TimestampCheck(timestamp=self.availableTime, duration=end):
-                    sleepTime = self.availableSchedule[i + 1][1]
-                    break
+                if not self.data.TimestampCheck(timestamp=self.availableTime, duration=start):
+                    if self.data.TimestampCheck(timestamp=self.availableTime, duration=end):
+                        sleepTime = self.availableSchedule[i + 1][1]
+                        break
 
             logger.info(f"【创建订单】出票期, 请求间隔将自动调整至{sleepTime:.2f}秒")
             sleep(sleepTime)
