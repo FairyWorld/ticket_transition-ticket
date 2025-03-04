@@ -420,12 +420,13 @@ class Bilibili:
         }
         res = self.net.Response(method="get", url=url, params=params)
         code = res["errno"]
+        msg = res["msg"]
 
         # 100012: 订单未完成,请等待 且 订单ID相同, 说明订单已经创建
         if code == 100012 and self.orderId == res["data"]["order_id"]:
             code = 0
 
-        return code, res["msg"]
+        return code, msg
 
     @logger.catch
     def QueryOrderStatus(self) -> tuple:

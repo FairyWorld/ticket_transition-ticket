@@ -44,23 +44,28 @@ class Info:
             "requestSource": self.scene,
         }
         res = self.net.Response(method="get", url=url, params=params)
+        code = res["errno"]
+        msg = res["msg"]
 
-        base_info_id = 0
-        for i, item in enumerate(res["data"]["performance_desc"]["list"]):
-            if item["module"] == "base_info":
-                base_info_id = i
-                break
+        match code:
+            # 成功
+            case 0:
+                base = 0
+                for i, item in enumerate(res["data"]["performance_desc"]["list"]):
+                    if item["module"] == "base_info":
+                        base = i
+                        break
+                dist = {
+                    "id": res["data"]["id"],
+                    "name": res["data"]["name"],
+                    "time": res["data"]["performance_desc"]["list"][base]["details"][0]["content"],
+                    "need_deliver": res["data"]["has_paper_ticket"],
+                    "need_contact": res["data"]["need_contact"],
+                }
+            case _:
+                dist = {}
 
-        dist = {
-            "id": res["data"]["id"],
-            "name": res["data"]["name"],
-            "time": res["data"]["performance_desc"]["list"][base_info_id]["details"][0][
-                "content"
-            ],
-            "need_deliver": res["data"]["has_paper_ticket"],
-            "need_contact": res["data"]["need_contact"],
-        }
-        return dist
+        return code, msg, dist
 
     def ScreenList(self, projectId: int) -> list[dict]:
         """
