@@ -317,8 +317,8 @@ class Bilibili:
         self.deliverNeed: 是否需要邮寄
         self.contactNeed: 是否需要联系人
         """
-        projectInfo = self.info.Project(projectId=self.projectId)
-        screenInfo = self.info.Screen(projectId=self.projectId, screenId=self.screenId)
+        _, _, projectInfo = self.info.Project(projectId=self.projectId)
+        _, _, screenInfo = self.info.Screen(projectId=self.projectId, screenId=self.screenId)
 
         self.deliverNeed = projectInfo["need_deliver"]
         self.contactNeed = not projectInfo["need_contact"]
