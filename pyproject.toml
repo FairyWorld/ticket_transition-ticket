@@ -43,7 +43,7 @@ graphviz = "^0.20.3"
 pygraphviz = "^1.13"
 
 [tool.ruff]
-line-length = 96
+line-length = 144
 
 [build-system]
 requires = ["poetry-core"]
