@@ -237,7 +237,7 @@ class Bilibili:
         return code, msg
 
     @logger.catch
-    def GenerateToken(self) -> str:
+    def GenerateToken(self) -> None:
         """
         生成Token
 
@@ -284,7 +284,7 @@ class Bilibili:
         p4 = encrypt(self.skuId, "skuId")
         token = "w" + p1 + "AA" + p2 + "AA" + p3 + "EAAQAJ" + p4 + "."
 
-        return token
+        self.token = token
 
     @logger.catch
     def QueryAmount(self) -> tuple[int, str, bool, int, int]:

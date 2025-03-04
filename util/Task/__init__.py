@@ -115,7 +115,7 @@ class Task:
         self.machine.add_transition(
             trigger="WaitAvailable",
             source="等待开票",
-            dest="获取Token",
+            dest="创建订单",
         )
 
         # 获取Token结束
@@ -255,7 +255,7 @@ class Task:
         """
         等待开票
         """
-        code, start_time = self.api.QuerySaleStartTime()
+        code, msg, start_time = self.api.QuerySaleStartTime()
 
         match code:
             # 成功
@@ -265,7 +265,7 @@ class Task:
 
             # 不知道
             case _:
-                logger.error("【获取开票时间】获取失败!")
+                logger.error(f"【获取开票时间】获取失败! {msg}")
 
         countdown = start_time - int(time())
         logger.info("【等待开票】本机时间已校准!")
@@ -305,6 +305,7 @@ class Task:
                 # 预处理
                 if countdown == 30:
                     self.api.QueryCacheInfo()
+                    self.api.GenerateToken()
                     self.queryCache = True
                     logger.info("【等待开票】已缓存商品信息")
 
@@ -357,6 +358,7 @@ class Task:
         # 顺路
         if not self.queryCache and self.countdownOver:
             self.api.QueryCacheInfo()
+            self.api.GenerateToken()
             self.queryCache = True
             logger.info("【获取Token】已缓存商品信息")
 
