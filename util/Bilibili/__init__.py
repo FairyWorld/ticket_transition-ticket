@@ -312,9 +312,9 @@ class Bilibili:
         return code, msg, clickable, salenum, num
 
     @logger.catch
-    def QueryParamInfo(self) -> None:
+    def QueryCacheInfo(self) -> None:
         """
-        获取基本信息
+        获取缓存信息
 
         self.deliverFee: 邮费
         self.deliverNeed: 是否需要邮寄
