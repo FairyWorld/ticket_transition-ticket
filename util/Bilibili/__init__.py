@@ -274,7 +274,7 @@ class Bilibili:
                 case _:
                     return ""
 
-        p1 = encrypt(int(time() * 1000), "timestamp")
+        p1 = encrypt(int(time()), "timestamp")
         p2 = encrypt(self.projectId, "projectId")
         p3 = encrypt(self.screenId, "screenId")
         p4 = encrypt(self.skuId, "skuId")
