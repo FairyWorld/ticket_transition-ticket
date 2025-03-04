@@ -213,6 +213,7 @@ class Bilibili:
             "order_type": self.orderType,
             "token": "",
             "requestSource": self.scene,
+            "newRisk": True,
         }
         res = self.net.Response(method="post", url=url, params=params)
         code = res["errno"]
