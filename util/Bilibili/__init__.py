@@ -248,9 +248,12 @@ class Bilibili:
             加密
             """
             match type:
-                # 7 位 timestamp 参数
+                # 6 位 timestamp 参数
                 case "timestamp":
-                    return "9999999"
+                    v1 = char.to_bytes(8, byteorder='big')
+                    v2 = urlsafe_b64encode(v1).decode('utf-8')
+                    v3 = v2[5:11]
+                    return v3
                 # 3 位 projectId 参数
                 case "projectId":
                     v1 = char.to_bytes(3, "big")
@@ -275,11 +278,12 @@ class Bilibili:
                     return ""
 
         p1 = encrypt(int(time()), "timestamp")
+        # p1 = "999999"
         p2 = encrypt(self.projectId, "projectId")
         p3 = encrypt(self.screenId, "screenId")
         p4 = encrypt(self.skuId, "skuId")
 
-        token = p1 + "AA" + p2 + "AA" + p3 + "EAAQAJ" + p4 + "."
+        token = "w" + p1 + "AA" + p2 + "AA" + p3 + "EAAQAJ" + p4 + "."
         return token
 
     @logger.catch
