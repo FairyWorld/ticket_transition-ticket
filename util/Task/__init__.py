@@ -355,7 +355,11 @@ class Task:
 
             # 不知道
             case _:
-                logger.error(f"【获取Token】{self.queryTokenCode}: {msg}")
+                if msg == "请求错误: 429":
+                    logger.warning("【创建订单】429! 服务器卡卡卡咔咔咔咔卡卡卡")
+                    self.createOrderCode = 429
+                else:
+                    logger.error(f"【获取Token】{self.queryTokenCode}: {msg}")
 
         # 顺路
         if not self.queryCache and self.countdownOver:
