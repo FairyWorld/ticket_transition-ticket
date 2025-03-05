@@ -121,7 +121,7 @@ class Task:
             source="等待倒计时",
             dest="预处理",
         )
-        
+
         # 预处理结束
         self.machine.add_transition(
             trigger="PreProcess",
@@ -330,7 +330,7 @@ class Task:
                     logger.info(f"【等待开票】需要等待 {countdown / 60:.1f} 分钟")
                     sleep(60)
                     countdown -= 60
-                
+
                 elif 600 > countdown >= 60:
                     self.countdownCode = 1
 
@@ -402,13 +402,13 @@ class Task:
         self.api.QueryCacheInfo()
         self.queryCache = True
         logger.info("【获取Token】已缓存商品信息")
-        
+
         self.queryTokenCode, msg = self.api.QueryToken()
         match self.queryTokenCode:
             # 成功
             case 0:
                 logger.success("【获取Token】Token获取成功!")
-                
+
                 self.generateTokenCode, msg = self.api.GenerateToken()
                 match self.generateTokenCode:
                     # 成功
