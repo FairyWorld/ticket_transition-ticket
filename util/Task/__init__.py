@@ -209,8 +209,8 @@ class Task:
             dest="创建订单",
             # 有票
             conditions=lambda: self.queryTicketCode
-            # 超过定时刷新时间
-            or not self.data.TimestampCheck(
+            # 超过定时刷新时间 && 未跳过
+            or self.skipTokenCode == -1 and not self.data.TimestampCheck(
                 timestamp=self.refreshTime,
                 duration=self.refreshInterval,
             ),
@@ -424,6 +424,7 @@ class Task:
             # 验证
             case -401:
                 logger.warning("【获取Token】需要验证! 下面进入自动过验证")
+                self.skipTokenCode = -1
 
     @logger.catch
     def StartPerformAction(self) -> None:
