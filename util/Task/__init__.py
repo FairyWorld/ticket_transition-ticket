@@ -70,10 +70,11 @@ class Task:
         ]
 
         # Code
-        self.skipToken = False
         self.queryCache = False
-        self.countdownOver = False
+        self.countdownCode = 114514
+        self.skipTokenCode = 114514
         self.queryTokenCode = 114514
+        self.generateTokenCode = 114514
         self.riskProcessCode = 114514
         self.queryTicketCode = False
         self.createOrderCode = 114514
@@ -81,7 +82,11 @@ class Task:
 
         self.states = [
             State(name="开始"),
+            State(name="等待倒计时", on_enter="WaitCountdownAction"),
+            State(name="预处理", on_enter="PreProcessAction"),
             State(name="等待开票", on_enter="WaitAvailableAction"),
+            State(name="开始抢票", on_enter="StartAction"),
+            State(name="生成Token", on_enter="GenerateTokenAction"),
             State(name="获取Token", on_enter="QueryTokenAction"),
             State(name="验证码", on_enter="RiskProcessAction"),
             State(name="等待余票", on_enter="QueryTicketAction"),
@@ -108,14 +113,62 @@ class Task:
         self.machine.add_transition(
             trigger="Next",
             source="开始",
+            dest="等待倒计时",
+        )
+
+        # 等待倒计时结束
+        self.machine.add_transition(
+            trigger="WaitCountdown",
+            source="等待倒计时",
+            dest="预处理",
+        )
+        
+        # 预处理结束
+        self.machine.add_transition(
+            trigger="PreProcess",
+            source="预处理",
+            dest="开始抢票",
+            # 未跳过
+            conditions=lambda: self.skipTokenCode == -1,
+        )
+        self.machine.add_transition(
+            trigger="PreProcess",
+            source="预处理",
             dest="等待开票",
+            # 未开票
+            conditions=lambda: self.countdownCode == 1,
+        )
+        self.machine.add_transition(
+            trigger="PreProcess",
+            source="预处理",
+            dest="开始抢票",
+            # 已开票
+            conditions=lambda: self.countdownCode == 0,
         )
 
         # 等待开票结束
         self.machine.add_transition(
             trigger="WaitAvailable",
             source="等待开票",
+            dest="开始抢票",
+            # 已开票
+            conditions=lambda: self.countdownCode == 0,
+        )
+
+        # 开始抢票结束
+        self.machine.add_transition(
+            trigger="StartPerform",
+            source="开始抢票",
+            dest="获取Token",
+            # 未跳过
+            conditions=lambda: self.skipTokenCode == -1,
+        )
+        self.machine.add_transition(
+            trigger="StartPerform",
+            source="开始抢票",
             dest="创建订单",
+            # 已跳过
+            conditions=lambda: self.skipTokenCode == 0,
         )
 
         # 获取Token结束
@@ -251,9 +304,9 @@ class Task:
             logging.getLogger("transitions").setLevel(logging.CRITICAL)
 
     @logger.catch
-    def WaitAvailableAction(self) -> None:
+    def WaitCountdownAction(self) -> None:
         """
-        等待开票
+        等待倒计时
         """
         code, msg, start_time = self.api.QuerySaleStartTime()
 
@@ -268,13 +321,12 @@ class Task:
                 logger.error(f"【获取开票时间】获取失败! {msg}")
 
         countdown = start_time - int(time())
-        logger.info("【等待开票】本机时间已校准!")
+        logger.warning("【等待开票】请确保本机时间是北京时间, 服务器用户尤其要注意!")
 
-        if countdown > 0:
-            logger.warning("【等待开票】请确保本机时间是北京时间, 服务器用户尤其要注意!")
-            self.countdownOver = False
+        if countdown > 600:
+            self.countdownCode = 2
 
-            while countdown > 0:
+            while self.countdownCode == 2:
                 countdown = start_time - int(time())
 
                 if countdown >= 3600:
@@ -286,8 +338,47 @@ class Task:
                     logger.info(f"【等待开票】需要等待 {countdown / 60:.1f} 分钟")
                     sleep(60)
                     countdown -= 60
+                
+                elif 600 > countdown >= 60:
+                    self.countdownCode = 1
 
-                elif 600 > countdown > 60:
+        elif 600 > countdown > 0:
+            self.countdownCode = 1
+
+        elif countdown == 0:
+            logger.info("【等待开票】等待结束! 开始抢票")
+            self.countdownCode = 0
+
+        else:
+            logger.info("【等待开票】已开票! 开始进入抢票模式")
+            self.countdownCode = 0
+
+    @logger.catch
+    def WaitAvailableAction(self) -> None:
+        """
+        等待开票
+        """
+        code, msg, start_time = self.api.QuerySaleStartTime()
+
+        match code:
+            # 成功
+            case 0:
+                pass
+
+            # 不知道
+            case _:
+                logger.error(f"【获取开票时间】获取失败! {msg}")
+
+        countdown = start_time - int(time())
+        logger.warning("【等待开票】请确保本机时间是北京时间, 服务器用户尤其要注意!")
+
+        if countdown > 0:
+            self.countdownCode = 1
+
+            while self.countdownCode == 1:
+                countdown = start_time - int(time())
+
+                if 600 > countdown >= 60:
                     logger.info(f"【等待开票】准备开票! 需要等待 {countdown / 60:.1f} 分钟")
                     sleep(5)
                     countdown -= 5
@@ -301,21 +392,71 @@ class Task:
                 elif countdown < 1:
                     logger.info("【等待开票】即将开票!")
                     sleep(countdown)
-
-                # 预处理
-                if countdown == 30:
-                    self.api.QueryCacheInfo()
-                    self.api.GenerateToken()
-                    self.queryCache = True
-                    logger.info("【等待开票】已缓存商品信息")
+                    self.countdownCode = 0
 
         elif countdown == 0:
             logger.info("【等待开票】等待结束! 开始抢票")
-            self.countdownOver = True
+            self.countdownCode = 0
 
         else:
             logger.info("【等待开票】已开票! 开始进入抢票模式")
-            self.countdownOver = True
+            self.countdownCode = 0
+
+    @logger.catch
+    def PreProcessAction(self) -> None:
+        """
+        预处理
+        """
+        self.api.QueryCacheInfo()
+        self.queryCache = True
+        logger.info("【获取Token】已缓存商品信息")
+        
+        self.queryTokenCode, msg = self.api.QueryToken()
+        match self.queryTokenCode:
+            # 成功
+            case 0:
+                logger.success("【获取Token】Token获取成功!")
+                
+                self.generateTokenCode, msg = self.api.GenerateToken()
+                match self.generateTokenCode:
+                    # 成功
+                    case 0:
+                        logger.success("【获取Token】Token生成成功!")
+                        self.skipTokenCode = 0
+
+                    # 未知
+                    case _:
+                        logger.error(f"【获取Token】Token生成失败: {msg}")
+                        self.skipTokenCode = -1
+
+            # 验证
+            case -401:
+                logger.warning("【获取Token】需要验证! 下面进入自动过验证")
+
+    @logger.catch
+    def StartPerformAction(self) -> None:
+        """
+        开始抢票
+        """
+        pass
+
+    @logger.catch
+    def GenerateTokenAction(self) -> None:
+        """
+        生成Token
+        """
+        logger.info("【获取Token】正在生成Token...")
+        self.queryTokenCode, msg = self.api.GenerateToken()
+        match self.queryTokenCode:
+            # 成功
+            case 0:
+                logger.success("【获取Token】Token生成成功!")
+                self.skipTokenCode = 0
+
+            # 未知
+            case _:
+                logger.error(f"【获取Token】Token生成失败: {msg}")
+                self.skipTokenCode = -1
 
     @logger.catch
     def QueryTokenAction(self) -> None:
@@ -356,7 +497,8 @@ class Task:
                     logger.error(f"【获取Token】{self.queryTokenCode}: {msg}")
 
         # 顺路
-        if not self.queryCache and self.countdownOver:
+        # TODO: Move into PreProcess
+        if not self.queryCache and self.countdownCode == 0:
             self.api.QueryCacheInfo()
             self.api.GenerateToken()
             self.queryCache = True
@@ -637,7 +779,11 @@ class Task:
         """
         job = {
             "开始": "Next",
+            "等待倒计时": "WaitCountdown",
+            "预处理": "PreProcess",
             "等待开票": "WaitAvailable",
+            "开始抢票": "StartPerform",
+            "生成Token": "GenerateToken",
             "获取Token": "QueryToken",
             "验证码": "RiskProcess",
             "等待余票": "QueryTicket",
