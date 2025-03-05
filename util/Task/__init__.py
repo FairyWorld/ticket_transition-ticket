@@ -127,13 +127,6 @@ class Task:
         self.machine.add_transition(
             trigger="PreProcess",
             source="预处理",
-            dest="开始抢票",
-            # 未跳过
-            conditions=lambda: self.skipTokenCode == -1,
-        )
-        self.machine.add_transition(
-            trigger="PreProcess",
-            source="预处理",
             dest="等待开票",
             # 未开票
             conditions=lambda: self.countdownCode == 1,
