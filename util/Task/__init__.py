@@ -85,7 +85,7 @@ class Task:
             State(name="等待倒计时", on_enter="WaitCountdownAction"),
             State(name="预处理", on_enter="PreProcessAction"),
             State(name="等待开票", on_enter="WaitAvailableAction"),
-            State(name="开始抢票", on_enter="StartAction"),
+            State(name="开始抢票", on_enter="StartPerformAction"),
             State(name="生成Token", on_enter="GenerateTokenAction"),
             State(name="获取Token", on_enter="QueryTokenAction"),
             State(name="验证码", on_enter="RiskProcessAction"),
