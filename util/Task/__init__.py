@@ -86,7 +86,6 @@ class Task:
             State(name="预处理", on_enter="PreProcessAction"),
             State(name="等待开票", on_enter="WaitAvailableAction"),
             State(name="开始抢票", on_enter="StartPerformAction"),
-            State(name="生成Token", on_enter="GenerateTokenAction"),
             State(name="获取Token", on_enter="QueryTokenAction"),
             State(name="验证码", on_enter="RiskProcessAction"),
             State(name="等待余票", on_enter="QueryTicketAction"),
@@ -434,24 +433,6 @@ class Task:
         pass
 
     @logger.catch
-    def GenerateTokenAction(self) -> None:
-        """
-        生成Token
-        """
-        logger.info("【获取Token】正在生成Token...")
-        self.queryTokenCode, msg = self.api.GenerateToken()
-        match self.queryTokenCode:
-            # 成功
-            case 0:
-                logger.success("【获取Token】Token生成成功!")
-                self.skipTokenCode = 0
-
-            # 未知
-            case _:
-                logger.error(f"【获取Token】Token生成失败: {msg}")
-                self.skipTokenCode = -1
-
-    @logger.catch
     def QueryTokenAction(self) -> None:
         """
         获取Token
@@ -776,7 +757,6 @@ class Task:
             "预处理": "PreProcess",
             "等待开票": "WaitAvailable",
             "开始抢票": "StartPerform",
-            "生成Token": "GenerateToken",
             "获取Token": "QueryToken",
             "验证码": "RiskProcess",
             "等待余票": "QueryTicket",
