@@ -83,7 +83,7 @@ class Task:
         self.states = [
             State(name="开始"),
             State(name="等待倒计时", on_enter="WaitCountdownAction"),
-            State(name="预处理", on_enter="PreProcessAction"),
+            State(name="预处理", on_enter="PreloadCacheAction"),
             State(name="等待开票", on_enter="WaitAvailableAction"),
             State(name="开始抢票", on_enter="StartPerformAction"),
             State(name="获取Token", on_enter="QueryTokenAction"),
@@ -124,14 +124,14 @@ class Task:
 
         # 预处理结束
         self.machine.add_transition(
-            trigger="PreProcess",
+            trigger="PreloadCache",
             source="预处理",
             dest="等待开票",
             # 未开票
             conditions=lambda: self.countdownCode == 1,
         )
         self.machine.add_transition(
-            trigger="PreProcess",
+            trigger="PreloadCache",
             source="预处理",
             dest="开始抢票",
             # 已开票
@@ -394,13 +394,13 @@ class Task:
             self.countdownCode = 0
 
     @logger.catch
-    def PreProcessAction(self) -> None:
+    def PreloadCacheAction(self) -> None:
         """
         预处理
         """
         self.api.QueryCacheInfo()
         self.queryCache = True
-        logger.info("【获取Token】已缓存商品信息")
+        logger.info("【获取Token】正在缓存商品信息...")
 
         self.queryTokenCode, msg = self.api.QueryToken()
         match self.queryTokenCode:
@@ -471,7 +471,6 @@ class Task:
                     logger.error(f"【获取Token】{self.queryTokenCode}: {msg}")
 
         # 顺路
-        # TODO: Move into PreProcess
         if not self.queryCache and self.countdownCode == 0:
             self.api.QueryCacheInfo()
             self.api.GenerateToken()
@@ -754,7 +753,7 @@ class Task:
         job = {
             "开始": "Next",
             "等待倒计时": "WaitCountdown",
-            "预处理": "PreProcess",
+            "预处理": "PreloadCache",
             "等待开票": "WaitAvailable",
             "开始抢票": "StartPerform",
             "获取Token": "QueryToken",
