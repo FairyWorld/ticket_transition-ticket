@@ -321,12 +321,12 @@ class Task:
             while self.countdownCode == 2:
                 countdown = start_time - int(time())
 
-                if countdown >= 3600:
+                if countdown > 3600:
                     logger.info(f"【等待开票】需要等待 {countdown / 60:.1f} 分钟")
                     sleep(600)
                     countdown -= 600
 
-                elif 3600 > countdown >= 600:
+                elif 3600 >= countdown > 600:
                     logger.info(f"【等待开票】需要等待 {countdown / 60:.1f} 分钟")
                     sleep(60)
                     countdown -= 60
@@ -369,18 +369,18 @@ class Task:
             while self.countdownCode == 1:
                 countdown = start_time - int(time())
 
-                if 600 > countdown >= 60:
+                if 600 >= countdown > 60:
                     logger.info(f"【等待开票】准备开票! 需要等待 {countdown / 60:.1f} 分钟")
                     sleep(5)
                     countdown -= 5
 
-                elif 60 > countdown > 1:
+                elif 60 >= countdown > 1:
                     logger.info(f"【等待开票】即将开票! 需要等待 {countdown - 1} 秒")
                     sleep(1)
                     countdown -= 1
 
                 # 准点退出循环
-                elif countdown < 1:
+                elif 1 >= countdown > 0:
                     logger.info("【等待开票】即将开票!")
                     sleep(countdown)
                     self.countdownCode = 0
