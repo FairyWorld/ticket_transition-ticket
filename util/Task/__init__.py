@@ -362,7 +362,6 @@ class Task:
                 logger.error(f"【获取开票时间】获取失败! {msg}")
 
         countdown = start_time - int(time())
-        logger.warning("【等待开票】请确保本机时间是北京时间, 服务器用户尤其要注意!")
 
         if countdown > 0:
             self.countdownCode = 1
