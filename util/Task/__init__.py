@@ -401,41 +401,41 @@ class Task:
         """
         self.api.QueryCacheInfo()
         self.queryCache = True
-        logger.info("【获取Token】正在缓存商品信息...")
+        logger.info("【预处理】正在缓存商品信息...")
 
         self.queryTokenCode, msg = self.api.QueryToken()
         match self.queryTokenCode:
             # 成功
             case 0:
-                logger.success("【获取Token】Token获取成功!")
+                logger.success("【预处理】Token获取成功!")
 
                 self.generateTokenCode, msg = self.api.GenerateToken()
                 match self.generateTokenCode:
                     # 成功
                     case 0:
-                        logger.success("【获取Token】Token生成成功!")
+                        logger.success("【预处理】Token生成成功!")
                         self.skipTokenCode = 0
 
                     # 未知
                     case _:
-                        logger.error(f"【获取Token】Token生成失败: {msg}")
+                        logger.error(f"【预处理】Token生成失败: {msg}")
                         self.skipTokenCode = -1
 
             # 验证
             case -401:
-                logger.warning("【获取Token】需要验证! 下面进入自动过验证")
+                logger.warning("【预处理】Token需要验证! 已跳过生成Token")
                 self.skipTokenCode = -1
 
             # projectID/ScreenId/SkuID错误
             case 100080 | 100082:
-                logger.error("【获取Token】项目/场次/价位不存在!")
+                logger.error("【预处理】项目/场次/价位不存在!")
                 logger.warning("程序正在准备退出...")
                 sleep(5)
                 sys.exit()
 
             # 停售
             case 100039:
-                logger.error("【获取Token】早停售了你抢牛魔呢")
+                logger.error("【预处理】早停售了你抢牛魔呢")
                 logger.warning("程序正在准备退出...")
                 sleep(5)
                 sys.exit()
@@ -443,10 +443,10 @@ class Task:
             # 不知道
             case _:
                 if msg == "请求错误: 429":
-                    logger.warning("【创建订单】429! 服务器卡卡卡咔咔咔咔卡卡卡")
-                    self.createOrderCode = 429
+                    logger.warning("【预处理】429! 服务器卡卡卡咔咔咔咔卡卡卡")
+                    self.queryTokenCode = 429
                 else:
-                    logger.error(f"【获取Token】{self.queryTokenCode}: {msg}")
+                    logger.error(f"【预处理】{self.queryTokenCode}: {msg}")
 
     @logger.catch
     def StartPerformAction(self) -> None:
