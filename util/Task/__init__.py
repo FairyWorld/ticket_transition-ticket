@@ -399,9 +399,9 @@ class Task:
         """
         预处理
         """
+        logger.info("【预处理】正在缓存商品信息...")
         self.api.QueryCacheInfo()
         self.queryCache = True
-        logger.info("【预处理】正在缓存商品信息...")
 
         self.generateTokenCode, msg = self.api.GenerateToken()
         match self.generateTokenCode:
