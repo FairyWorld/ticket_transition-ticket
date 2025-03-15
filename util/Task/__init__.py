@@ -403,50 +403,17 @@ class Task:
         self.queryCache = True
         logger.info("【预处理】正在缓存商品信息...")
 
-        self.queryTokenCode, msg = self.api.QueryToken()
-        match self.queryTokenCode:
+        self.generateTokenCode, msg = self.api.GenerateToken()
+        match self.generateTokenCode:
             # 成功
             case 0:
-                logger.success("【预处理】Token获取成功!")
+                logger.success("【预处理】Token生成成功!")
+                self.skipTokenCode = 0
 
-                self.generateTokenCode, msg = self.api.GenerateToken()
-                match self.generateTokenCode:
-                    # 成功
-                    case 0:
-                        logger.success("【预处理】Token生成成功!")
-                        self.skipTokenCode = 0
-
-                    # 未知
-                    case _:
-                        logger.error(f"【预处理】Token生成失败: {msg}")
-                        self.skipTokenCode = -1
-
-            # 验证
-            case -401:
-                logger.warning("【预处理】Token需要验证! 已跳过生成Token")
-                self.skipTokenCode = -1
-
-            # projectID/ScreenId/SkuID错误
-            case 100080 | 100082:
-                logger.error("【预处理】项目/场次/价位不存在!")
-                logger.warning("程序正在准备退出...")
-                sleep(5)
-                sys.exit()
-
-            # 停售
-            case 100039:
-                logger.error("【预处理】早停售了你抢牛魔呢")
-                logger.warning("程序正在准备退出...")
-                sleep(5)
-                sys.exit()
-
-            # 不知道
+            # 未知
             case _:
-                if msg == "请求错误: 429":
-                    logger.warning("【预处理】429! 服务器卡卡卡咔咔咔咔卡卡卡")
-                    self.queryTokenCode = 429
-                else:
-                    logger.error(f"【预处理】{self.queryTokenCode}: {msg}")
+                logger.error(f"【预处理】Token生成失败: {msg}")
+                self.skipTokenCode = -1
 
     @logger.catch
     def StartPerformAction(self) -> None:
