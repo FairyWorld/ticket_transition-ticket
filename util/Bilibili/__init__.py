@@ -284,15 +284,8 @@ class Bilibili:
         p4 = encrypt(self.skuId, "skuId")
         token = "w" + p1 + "AA" + p2 + "AA" + p3 + "EAAQAJ" + p4 + "."
 
-        if token[7:] == self.token[7:]:
-            code = 0
-            msg = ""
-            self.token = token
-        else:
-            code = -1
-            msg = token
-
-        return code, msg
+        self.token = token
+        return 0, token
 
     @logger.catch
     def QueryAmount(self) -> tuple[int, str, bool, int, int]:
