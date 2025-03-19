@@ -301,6 +301,7 @@ class Task:
         """
         等待倒计时
         """
+        logger.warning("【等待开票】请确保本机时间是北京时间, 服务器用户尤其要注意!")
         code, msg, start_time = self.api.QuerySaleStartTime()
 
         match code:
@@ -314,12 +315,10 @@ class Task:
                 logger.error(f"【获取开票时间】获取失败! {msg}")
 
         countdown = start_time - int(time())
-        logger.warning("【等待开票】请确保本机时间是北京时间, 服务器用户尤其要注意!")
 
         if countdown > 600:
-            self.countdownCode = 2
 
-            while self.countdownCode == 2:
+            while countdown > 600:
                 countdown = start_time - int(time())
 
                 if countdown > 3600:
@@ -332,19 +331,8 @@ class Task:
                     sleep(60)
                     countdown -= 60
 
-                elif 600 > countdown >= 60:
-                    self.countdownCode = 1
-
-        elif 600 > countdown > 0:
-            self.countdownCode = 1
-
-        elif countdown == 0:
-            logger.info("【等待开票】等待结束! 开始抢票")
-            self.countdownCode = 0
-
-        else:
-            logger.info("【等待开票】已开票! 开始进入抢票模式")
-            self.countdownCode = 0
+        # 倒计时进入下一阶段
+        self.countdownCode = 1
 
     @logger.catch
     def WaitAvailableAction(self) -> None:
@@ -367,7 +355,7 @@ class Task:
         if countdown > 0:
             self.countdownCode = 1
 
-            while self.countdownCode == 1:
+            while countdown > 0:
                 countdown = start_time - int(time())
 
                 if 600 >= countdown > 60:
@@ -380,17 +368,15 @@ class Task:
                     sleep(1)
                     countdown -= 1
 
-                # 准点退出循环
-                elif 1 >= countdown > 0:
+                elif countdown < 1:
                     logger.info("【等待开票】即将开票!")
                     sleep(countdown)
-                    self.countdownCode = 0
 
-        elif countdown == 0:
+        if countdown == 0:
             logger.info("【等待开票】等待结束! 开始抢票")
             self.countdownCode = 0
 
-        else:
+        if countdown < 0:
             logger.info("【等待开票】已开票! 开始进入抢票模式")
             self.countdownCode = 0
 
