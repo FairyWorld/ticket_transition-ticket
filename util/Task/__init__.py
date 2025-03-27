@@ -317,7 +317,6 @@ class Task:
         countdown = start_time - int(time())
 
         if countdown > 600:
-
             while countdown > 600:
                 countdown = start_time - int(time())
 
