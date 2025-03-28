@@ -16,6 +16,34 @@
 
 黄牛 / 收费代抢４０００＋
 
+## 功能
+
+- 支持 mall
+  - [ ] 支持 mall
+  - [ ] 合并 raw url
+  - [ ] 区分 mall 和 show
+  - [ ] 优化 product config
+- 支持 选座
+  - [ ] 支持 选座
+  - [ ] 自动选座算法
+  - [ ] 选座 API
+- 支持 场贩
+  - [ ] 支持 场贩
+  - [ ] 附加至 info project screen/sku
+  - [ ] 场贩 API
+
+## 下载使用
+
+对于大型漫展活动, 请使用 Stable 版
+
+对于小型活动, 可以使用 Nightly 版本
+
+[Releases](https://github.com/biliticket/transition-ticket/releases)
+
+[Nightly Release](https://github.com/biliticket/transition-ticket/releases/tag/v8.191.9810)
+
+[Stable Release](https://github.com/biliticket/transition-ticket/releases/tag/v8.114.514)
+
 ### 注意事项
 
 1. MacOS / Linux 用户请根据 *手动安装* 流程安装进行使用
