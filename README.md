@@ -4,6 +4,8 @@
 
 [电报交流群](https://t.me/bilibili_ticket)
 
+[下载地址](https://github.com/biliticket/transition-ticket/releases)
+
 本程序仅供学习交流, 不得用于商业用途,
 
 使用本程序进行违法操作产生的法律责任由操作者自行承担,
@@ -13,18 +15,6 @@
 本脚本仅适用于蹲回流票, 我们反对将其用于抢票,
 
 黄牛 / 收费代抢４０００＋
-
-## 下载使用
-
-对于大型漫展活动, 请使用 Stable 版
-
-对于小型活动, 推荐使用 Nightly 版本
-
-[Releases](https://github.com/biliticket/transition-ticket/releases)
-
-[Nightly Release](https://github.com/biliticket/transition-ticket/releases/tag/v8.1919.810)
-
-[Stable Release](https://github.com/biliticket/transition-ticket/releases/tag/v8.114.514)
 
 ### 注意事项
 
