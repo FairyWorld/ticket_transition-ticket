@@ -454,4 +454,4 @@ class Bilibili:
         code = res["errno"]
         msg = res["msg"]
 
-        return code, msga
+        return code, msg
