@@ -251,29 +251,34 @@ class Bilibili:
             match type:
                 # 6 位 timestamp 参数
                 case "timestamp":
-                    v1 = char.to_bytes(8, "big")
-                    v2 = urlsafe_b64encode(v1).decode("utf-8")
-                    v3 = v2[5:11]
-                    return v3
-                # 3 位 projectId 参数
+                    v1 = char.to_bytes(5, "big")
+                    v2 = urlsafe_b64encode(v1).decode("utf-8").rstrip("=")
+                    return v2[1:8]
+                # 4 位 projectId 参数
                 case "projectId":
                     v1 = char.to_bytes(3, "big")
-                    v2 = urlsafe_b64encode(v1).decode("utf-8")
-                    v3 = v2[1:4]
-                    return v3
-                # 4 位 screenId 参数
+                    v2 = urlsafe_b64encode(v1).decode("utf-8").rstrip("=")
+                    return v2
+                # 5 位 screenId 参数
                 case "screenId":
                     v1 = char.to_bytes(4, "big")
-                    v2 = urlsafe_b64encode(v1).decode("utf-8")
-                    v3 = v2[2:6]
-                    return v3
-                # 3 位 skuId 参数
+                    v2 = urlsafe_b64encode(v1).decode("utf-8").rstrip("=")
+                    return v2[1:6]
+                # 1 位 orderType 参数
+                case "orderType":
+                    v1 = char.to_bytes(2, "big")
+                    v2 = urlsafe_b64encode(v1).decode("utf-8").rstrip("=")
+                    return v2[2:3]
+                # 2 位 count 参数
+                case "count":
+                    v1 = char.to_bytes(1, "big")
+                    v2 = urlsafe_b64encode(v1).decode("utf-8").rstrip("=")
+                    return v2
+                # 5 位 skuId 参数
                 case "skuId":
-                    v1 = char.to_bytes(4, "big")
-                    v2 = v1[2:4] + b"\x20"
-                    v3 = urlsafe_b64encode(v2).decode("utf-8")
-                    v4 = v3[0:3]
-                    return v4
+                    v1 = char.to_bytes(5, "big")
+                    v2 = urlsafe_b64encode(v1).decode("utf-8").rstrip("=")
+                    return v2[2:7]
                 case _:
                     return ""
 
@@ -281,8 +286,10 @@ class Bilibili:
         # p1 = encrypt(int(time()), "timestamp")
         p2 = encrypt(self.projectId, "projectId")
         p3 = encrypt(self.screenId, "screenId")
-        p4 = encrypt(self.skuId, "skuId")
-        token = "w" + p1 + "AA" + p2 + "AA" + p3 + "EAAQAJ" + p4 + "."
+        p4 = encrypt(self.orderType, "orderType")
+        p5 = encrypt(self.count, "count")
+        p6 = encrypt(self.skuId, "skuId")
+        token = "w" + p1 + "A" + p2 + "A" + p3 + p4 + "A" + p5 + p6 + "."
 
         self.token = token
         return 0, token
@@ -447,4 +454,4 @@ class Bilibili:
         code = res["errno"]
         msg = res["msg"]
 
-        return code, msg
+        return code, msga
