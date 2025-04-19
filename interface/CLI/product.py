@@ -110,8 +110,8 @@ class ProductCli:
             场次
             """
             try:
-                _, _, projectInfo = self.info.Project(projectId=projectId)
-                _, _, screenInfo = self.info.ScreenList(projectId=projectId)
+                _, _, projectInfo = self.info.QueryProject(projectId=projectId)
+                _, _, screenInfo = self.info.QueryTicketScreen(projectId=projectId)
 
                 lists = {
                     f"{self.YELLOW if screen['saleflag'] == '预售中' else ''}"
@@ -146,7 +146,7 @@ class ProductCli:
             screenId: 场次ID
             """
             try:
-                _, _, skuInfo = self.info.SkuList(projectId=projectId, screenId=screenId)
+                _, _, skuInfo = self.info.QueryTicketSku(projectId=projectId, screenId=screenId)
 
                 lists = {
                     f"{self.YELLOW if sku['saleflag'] == '预售中' else ''}"
