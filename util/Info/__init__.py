@@ -29,8 +29,23 @@ class Info:
         self.net = net
 
         self.scene = "neul-next"
+        self.sale_flag_map = {
+            1: "不可售",
+            2: "预售中",
+            3: "已停售",
+            4: "已售罄",
+            5: "不可用",
+            6: "库存紧张",
+            8: "暂时售罄",
+            9: "不在白名单",
+            101: "未开始",
+            102: "已结束",
+            103: "未完成",
+            105: "已下架",
+            106: "已取消",
+        }
 
-    def Project(self, projectId: int) -> tuple[int, str, dict]:
+    def QueryProject(self, projectId: int) -> tuple[int, str, dict]:
         """
         项目基本信息
 
@@ -38,7 +53,6 @@ class Info:
         """
         url = "https://show.bilibili.com/api/ticket/project/getV2"
         params = {
-            "version": "134",
             "id": projectId,
             "project_id": projectId,
             "requestSource": self.scene,
@@ -67,7 +81,44 @@ class Info:
 
         return code, msg, dist
 
-    def ScreenList(self, projectId: int) -> tuple[int, str, list[dict]]:
+    def QueryGoods(self, projectId: int) -> tuple[int, str, list[dict]]:
+        """
+        商品信息列表
+        
+        projectId: 项目ID
+        """
+        url = "https://show.bilibili.com/api/ticket/linkgoods/list"
+        params = {
+            "project_id": projectId,
+            "page_type": "0",
+        }
+        res = self.net.Response(method="get", url=url, params=params)
+        code = res["errno"]
+        msg = res["msg"]
+
+        match code:
+            # 成功
+            case 0:
+                goods = res["data"]["list"]
+                if not goods:
+                    return code, msg, []
+
+                dist = []
+                for good in goods:
+                    dist.append(
+                        {
+                            "project_type": 3,
+                            "link_id": good["id"],
+                            "name": good["detail"]["name"],
+                            "display_name": good["sale_flag_txt"],
+                        }
+                    )
+            case _:
+                dist = []
+
+        return code, msg, dist
+
+    def QueryTicketScreen(self, projectId: int) -> tuple[int, str, list[dict]]:
         """
         场次信息列表
 
@@ -75,7 +126,6 @@ class Info:
         """
         url = "https://show.bilibili.com/api/ticket/project/getV2"
         params = {
-            "version": "134",
             "id": projectId,
             "project_id": projectId,
             "requestSource": self.scene,
@@ -109,7 +159,7 @@ class Info:
 
         return code, msg, dist
 
-    def SkuList(self, projectId: int, screenId: int) -> tuple[int, str, list[dict]]:
+    def QueryTicketSku(self, projectId: int, screenId: int) -> tuple[int, str, list[dict]]:
         """
         票种信息列表
 
@@ -117,7 +167,6 @@ class Info:
         """
         url = "https://show.bilibili.com/api/ticket/project/getV2"
         params = {
-            "version": "134",
             "id": projectId,
             "project_id": projectId,
             "requestSource": self.scene,
@@ -159,6 +208,88 @@ class Info:
 
         return code, msg, dist
 
+    def QueryGoodsSpec(self, linkId: int) -> tuple[int, str, list[dict]]:
+        """
+        商品规格信息列表
+        """
+        url = "https://show.bilibili.com/api/ticket/linkgoods/detail"
+        params = {
+            "link_id": linkId,
+        }
+        res = self.net.Response(method="get", url=url, params=params)
+        code = res["errno"]
+        msg = res["msg"]
+        
+        match code:
+            # 成功
+            case 0:
+                specs = res["data"]["specs_list"]
+                if not specs:
+                    raise InfoException("商品详情", "该商品暂未开放票务信息")
+
+                dist = []
+                for spec in specs:
+                    dist.append(
+                        {
+                            "id": spec["id"],
+                            "name": spec["name"],
+                            "display_name": self.sale_flag_map[spec["sale_flag_number"]],
+                            "sale_start": spec["sale_start"],
+                            "sale_end": spec["sale_end"],
+                            "express_fee": spec["express_fee"],
+                        }        
+                    )
+            case _:
+                dist = []
+
+        return code, msg, dist
+
+    def QueryGoodsSku(self, linkId: int, specId: int) -> tuple[int, str, list[dict]]:
+        """
+        商品票种信息列表
+
+        goodsId: 商品ID
+        """
+        url = "https://show.bilibili.com/api/ticket/linkgoods/detail"
+        params = {
+            "link_id": linkId,
+        }
+        res = self.net.Response(method="get", url=url, params=params)
+        code = res["errno"]
+        msg = res["msg"]
+        
+        match code:
+            # 成功
+            case 0:
+                goods = res["data"]
+                
+                for i in res["data"]["specs_list"]:
+                    if i["id"] == specId:
+                        spec = i
+                        skus = i["ticket_list"]
+                        break
+
+                dist = []
+                for sku in skus:
+                    dist.append(
+                        {
+                            "id": sku["id"],
+                            "name": f"{goods['name']} - {spec['name']} - {sku['desc']}",
+                            "display_name": self.sale_flag_map[sku["sale_flag_number"]],
+                            "price": sku["price"],
+                            "display_price": f"{(sku['price'] / 100):.2f}",
+                            "sale_start": spec["saleStart"],
+                            "sale_end": spec["saleEnd"],
+                            "clickable": sku["clickable"],
+                            "salenum": sku["sale_flag_number"],
+                            "num": sku["num"],
+                        }
+                    )
+            case _:
+                dist = []
+
+        return code, msg, dist
+
     def Screen(self, projectId: int, screenId: int) -> tuple[int, str, dict]:
         """
         场次信息
@@ -166,7 +297,7 @@ class Info:
         projectId: 项目ID
         screenId: 场次ID
         """
-        code, msg, screens = self.ScreenList(projectId=projectId)
+        code, msg, screens = self.QueryTicketScreen(projectId=projectId)
 
         for screen in screens:
             if screen["id"] == screenId:
@@ -183,7 +314,7 @@ class Info:
         skuId: 票档ID
         cost: 价格
         """
-        code, msg, skus = self.SkuList(projectId=projectId, screenId=screenId)
+        code, msg, skus = self.QueryTicketSku(projectId=projectId, screenId=screenId)
 
         for sku in skus:
             if sku["id"] == skuId and sku["price"] == cost:
