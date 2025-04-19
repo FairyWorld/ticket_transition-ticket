@@ -75,9 +75,12 @@ class ProductCli:
         """
 
         @logger.catch
-        def ProjectStep() -> int:
+        def ProjectStep() -> tuple[int, int]:
             """
             活动
+            
+            活动：https://show.bilibili.com/platform/detail.html?id=114514
+            商品：https://mall.bilibili.com/neul-next/detailuniversal/detail.html?itemsId=12092996
             """
             # print(f"{self.BLUE}[{self.YELLOW}!{self.BLUE}]{self.RESET} 近期活动: show.bilibili.com/platform/detail.html?id=114514")
             url = self.data.Inquire(
@@ -86,12 +89,16 @@ class ProductCli:
             )
 
             try:
-                match = re.search(r"id=(\d+)", url)
-                if match:
-                    projectId = int(match.group(1))
-                    return projectId
+                match_show = re.search(r"id=(\d+)", url)
+                match_mall = re.search(r"itemsId=(\d+)", url)
+                if match_show:
+                    projectId = int(match_show.group(1))
+                    return 1, projectId
+                elif match_mall:
+                    projectId = int(match_mall.group(1))
+                    return 2, projectId
                 else:
-                    raise InfoException("商品配置初始化", "活动URL格式错误!")
+                    raise InfoException("商品配置初始化", "商品URL格式错误!")
 
             except InfoException:
                 logger.warning("请重新配置活动信息!")
