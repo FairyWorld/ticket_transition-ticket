@@ -84,7 +84,6 @@ class Info:
     def QueryGoodsList(self, projectId: int) -> tuple[int, str, list[dict]]:
         """
         商品信息列表
-        
         projectId: 项目ID
         """
         url = "https://show.bilibili.com/api/ticket/linkgoods/list"
@@ -223,11 +222,11 @@ class Info:
         res = self.net.Response(method="get", url=url, params=params)
         code = res["errno"]
         msg = res["msg"]
-        
+
         match code:
             # 成功
             case 0:
-                goods = res["data"]
+                good = res["data"]
                 screens = res["data"]["specs_list"]
                 if not screens:
                     raise InfoException("商品详情", "该商品暂未开放票务信息")
@@ -237,7 +236,9 @@ class Info:
                     dist.append(
                         {
                             "id": screen["id"],
-                            "name": f"{goods['name']} - {screen['name']}",
+                            "item_id": good["item_id"],
+                            "link_id": linkId,
+                            "name": f"{good['name']} - {screen['name']}",
                             "sale_start": screen["sale_start"],
                             "sale_end": screen["sale_end"],
                             "express_fee": screen["express_fee"],
@@ -263,11 +264,11 @@ class Info:
         res = self.net.Response(method="get", url=url, params=params)
         code = res["errno"]
         msg = res["msg"]
-        
+
         match code:
             # 成功
             case 0:
-                goods = res["data"]
+                good = res["data"]
                 
                 for i in res["data"]["specs_list"]:
                     if i["id"] == screenId:
@@ -280,7 +281,7 @@ class Info:
                     dist.append(
                         {
                             "id": sku["id"],
-                            "name": f"{goods['name']} - {screen['name']} - {sku['desc']}",
+                            "name": f"{good['name']} - {screen['name']} - {sku['desc']}",
                             "price": sku["price"],
                             "display_price": f"{(sku['price'] / 100):.2f}",
                             "sale_start": screen["sale_start"],
