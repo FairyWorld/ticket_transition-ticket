@@ -238,6 +238,7 @@ class Info:
                         {
                             "id": screen["id"],
                             "item_id": good["item_id"],
+                            "link_id": linkId,
                             "name": f"{good['name']} - {screen['name']}",
                             "sale_start": screen["sale_start"],
                             "sale_end": screen["sale_end"],
