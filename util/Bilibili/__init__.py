@@ -24,6 +24,9 @@ class Bilibili:
         screenId: int,
         skuId: int,
         saleStart: int,
+        count: int,
+        cost: int,
+        deliverFee: int,
         needDeliver: bool,
         needContact: bool,
         act: dict,
@@ -32,9 +35,6 @@ class Bilibili:
         phone: str,
         user: dict,
         orderType: int = 1,
-        count: int = 1,
-        cost: int = 0,
-        deliverFee: int = 0,
     ):
         """
         初始化
@@ -45,6 +45,9 @@ class Bilibili:
         screenId: 场次ID
         skuId: 票种ID
         saleStart: 开始时间戳
+        count: 购买数量
+        cost: 订单单价
+        deliverFee: 运费
         needDeliver: 是否需要填写收货信息
         needContact: 是否需要填写联系人信息
         act: 优惠信息
@@ -53,9 +56,6 @@ class Bilibili:
         phone: 手机号
         user: 用户信息
         orderType: 订单类型
-        count: 购买数量
-        cost: 订单单价
-        deliverFee: 运费
         """
         self.net = net
         self.info = Info(net=net)
@@ -352,6 +352,7 @@ class Bilibili:
             "project_id": self.projectId,
             "screen_id": self.screenId,
             "sku_id": self.skuId,
+            "link_id": self.linkId,
             "count": self.count,
             "pay_money": self.payment,
             "order_type": self.orderType,

@@ -250,7 +250,7 @@ class Task:
             source="创建订单",
             dest="创建订单",
             # 失败重试
-            conditions=lambda: self.createOrderCode in [429, 100001]
+            conditions=lambda: self.createOrderCode in [429, 100001, 209001]
             # 冲刺模式
             or self.data.TimestampCheck(
                 timestamp=self.availableTime,
@@ -586,6 +586,13 @@ class Task:
             # 项目/票种不可售 等待开票
             case 100016 | 100017:
                 logger.error("【创建订单】该项目/票种目前不可售!")
+                logger.warning("程序正在准备退出...")
+                sleep(5)
+                sys.exit()
+
+            # 场贩指定票种兑换商品
+            case 207002:
+                logger.error("【创建订单】商品为指定票种兑换商品! 请在购买对应票种后重新购买商品")
                 logger.warning("程序正在准备退出...")
                 sleep(5)
                 sys.exit()

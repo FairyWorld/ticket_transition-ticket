@@ -237,6 +237,7 @@ class Info:
                     dist.append(
                         {
                             "id": screen["id"],
+                            "item_id": goods["item_id"],
                             "name": f"{goods['name']} - {screen['name']}",
                             "sale_start": screen["sale_start"],
                             "sale_end": screen["sale_end"],

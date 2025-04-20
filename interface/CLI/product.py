@@ -147,8 +147,8 @@ class ProductCli:
                 _, _, screenInfo = self.info.QueryTicketScreenList(projectId=projectId)
                 
                 if linkId:
-                    _, _, specInfo = self.info.QueryGoodsScreenList(linkId=linkId)
-                    screenInfo = screenInfo + specInfo
+                    _, _, goodsScreenInfo = self.info.QueryGoodsScreenList(linkId=linkId)
+                    screenInfo = screenInfo + goodsScreenInfo
 
                 lists = {
                     f"{self.YELLOW if screen['saleflag'] == '预售中' else ''}"
@@ -163,10 +163,18 @@ class ProductCli:
                 )
                 return (
                     lists[select]["id"],
+                    0,
                     lists[select]["express_fee"],
                     projectInfo["name"],
                     projectInfo["need_deliver"],
                     projectInfo["need_contact"],
+                ) if not linkId else (
+                    lists[select]["id"],
+                    lists[select]["item_id"],
+                    lists[select]["express_fee"],
+                    projectInfo["name"],
+                    True,
+                    True,
                 )
 
             except InfoException:
@@ -233,12 +241,12 @@ class ProductCli:
 
         # TODO: complete mall strategy by matching projectType (1: show, 2: mall)
         _projectType, projectId = ProjectStep()
-        linkId = GoodsStep(projectId=projectId)
+        linkId = GoodsStep(projectId=projectId) or 0
         
-        screenId, expressFee, projectName, needDeliver, needContact = ScreenStep(projectId=projectId, linkId=linkId)
+        screenId, itemId, expressFee, projectName, needDeliver, needContact = ScreenStep(projectId=projectId, linkId=linkId)
         skuId, skuSelected, saleStart, cost, act = SkuStep(projectId=projectId, linkId=linkId, screenId=screenId)
 
-        self.config["projectId"] = projectId
+        self.config["projectId"] = projectId if not linkId else itemId
         self.config["linkId"] = linkId
         self.config["screenId"] = screenId
         self.config["skuId"] = skuId
