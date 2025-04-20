@@ -169,21 +169,25 @@ class ProductCli:
                 )
 
                 dist = (
-                    lists[select]["id"],
-                    projectInfo["id"],
-                    0,
-                    lists[select]["express_fee"],
-                    projectInfo["name"],
-                    projectInfo["need_deliver"],
-                    projectInfo["need_contact"],
-                ) if not linkIds else (
-                    lists[select]["id"],
-                    lists[select]["item_id"],
-                    lists[select]["link_id"],
-                    lists[select]["express_fee"],
-                    projectInfo["name"],
-                    True,
-                    True,
+                    (
+                        lists[select]["id"],
+                        projectInfo["id"],
+                        0,
+                        lists[select]["express_fee"],
+                        projectInfo["name"],
+                        projectInfo["need_deliver"],
+                        projectInfo["need_contact"],
+                    )
+                    if not linkIds
+                    else (
+                        lists[select]["id"],
+                        lists[select]["item_id"],
+                        lists[select]["link_id"],
+                        lists[select]["express_fee"],
+                        projectInfo["name"],
+                        True,
+                        True,
+                    )
                 )
                 return dist
 
@@ -203,7 +207,6 @@ class ProductCli:
             screenId: 场次ID
             """
             try:
-
                 if linkId:
                     _, _, skuInfo = self.info.QueryGoodsSkuList(linkId=linkId, screenId=screenId)
                 else:

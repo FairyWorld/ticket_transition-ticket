@@ -203,7 +203,9 @@ class Info:
                             "act": {
                                 "act_id": sku["discount_act"]["act_id"],
                                 "act_type": sku["discount_act"]["act_type"],
-                            } if sku["discount_act"] else {},
+                            }
+                            if sku["discount_act"]
+                            else {},
                         }
                     )
             case _:
@@ -244,7 +246,7 @@ class Info:
                             "express_fee": screen["express_fee"],
                             "salenum": screen["sale_flag_number"],
                             "saleflag": self.saleFlagMap[screen["sale_flag_number"]],
-                        }        
+                        }
                     )
             case _:
                 dist = []
@@ -269,7 +271,7 @@ class Info:
             # 成功
             case 0:
                 good = res["data"]
-                
+
                 for i in res["data"]["specs_list"]:
                     if i["id"] == screenId:
                         screen = i
