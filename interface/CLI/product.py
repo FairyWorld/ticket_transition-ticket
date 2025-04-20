@@ -115,7 +115,7 @@ class ProductCli:
                 _, _, goodsInfo = self.info.QueryGoodsList(projectId=projectId)
 
                 if not goodsInfo:
-                    return 0
+                    return []
 
                 dist = []
                 for i in goodsInfo:
@@ -159,7 +159,7 @@ class ProductCli:
 
                 dist = (
                     lists[select]["id"],
-                    0,
+                    projectInfo["id"],
                     0,
                     lists[select]["express_fee"],
                     projectInfo["name"],
@@ -167,8 +167,8 @@ class ProductCli:
                     projectInfo["need_contact"],
                 ) if not linkIds else (
                     lists[select]["id"],
-                    lists[select]["link_id"],
                     lists[select]["item_id"],
+                    lists[select]["link_id"],
                     lists[select]["express_fee"],
                     projectInfo["name"],
                     True,
@@ -183,7 +183,7 @@ class ProductCli:
                 sys.exit()
 
         @logger.catch
-        def SkuStep(projectId: int, linkId: int, screenId: int) -> tuple:
+        def SkuStep(projectId: int, linkId: int, screenId: int) -> tuple[int, str, int, int, dict]:
             """
             价位
 
@@ -240,22 +240,22 @@ class ProductCli:
         print("下面开始配置商品!")
 
         # TODO: complete mall strategy by matching projectType (1: show, 2: mall)
-        _projectType, projectId = ProjectStep()
+        _projectType, _projectId = ProjectStep()
 
-        linkIds = GoodsStep(projectId=projectId) or []
+        linkIds = GoodsStep(projectId=_projectId)
 
-        screenId, linkId, itemId, expressFee, projectName, needDeliver, needContact = ScreenStep(
-            projectId=projectId,
+        screenId, projectId, linkId, expressFee, projectName, needDeliver, needContact = ScreenStep(
+            projectId=_projectId,
             linkIds=linkIds,
         )
 
-        skuId, skuSelected, saleStart, cost, act = SkuStep(
+        skuId, skuName, saleStart, cost, act = SkuStep(
             projectId=projectId,
             linkId=linkId,
             screenId=screenId,
         )
 
-        self.config["projectId"] = projectId if not linkIds else itemId
+        self.config["projectId"] = projectId
         self.config["linkId"] = linkId
         self.config["screenId"] = screenId
         self.config["skuId"] = skuId
@@ -267,7 +267,7 @@ class ProductCli:
         self.config["needContact"] = needContact
 
         self.conf.Save(
-            FilenameStep(name=f"{projectName} ({skuSelected})"),
+            FilenameStep(name=f"{projectName} ({skuName})"),
             self.config,
         )
         logger.info("【商品配置初始化】配置已保存!")
