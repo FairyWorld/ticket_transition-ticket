@@ -84,7 +84,7 @@ class Info:
     def QueryGoodsList(self, projectId: int) -> tuple[int, str, list[dict]]:
         """
         商品信息列表
-        
+
         projectId: 项目ID
         """
         url = "https://show.bilibili.com/api/ticket/linkgoods/list"
@@ -223,7 +223,7 @@ class Info:
         res = self.net.Response(method="get", url=url, params=params)
         code = res["errno"]
         msg = res["msg"]
-        
+
         match code:
             # 成功
             case 0:
@@ -265,7 +265,7 @@ class Info:
         res = self.net.Response(method="get", url=url, params=params)
         code = res["errno"]
         msg = res["msg"]
-        
+
         match code:
             # 成功
             case 0:

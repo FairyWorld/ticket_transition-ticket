@@ -78,7 +78,7 @@ class ProductCli:
         def ProjectStep() -> tuple[int, int]:
             """
             活动
-            
+
             活动：https://show.bilibili.com/platform/detail.html?id=114514
             商品：https://mall.bilibili.com/neul-next/detailuniversal/detail.html?itemsId=1919810
             """
@@ -108,7 +108,7 @@ class ProductCli:
         def GoodsStep(projectId: int) -> list[int]:
             """
             商品
-            
+
             projectId: 活动ID
             """
             try:
@@ -116,7 +116,7 @@ class ProductCli:
 
                 if not goodsInfo:
                     return 0
-                
+
                 dist = []
                 for i in goodsInfo:
                     dist.append(i["link_id"])
@@ -133,7 +133,7 @@ class ProductCli:
         def ScreenStep(projectId: int, linkIds: list[int]) -> tuple[int, int, int, int, str, bool, bool]:
             """
             场次
-            
+
             linkIds: 商品ID列表
             """
             try:
@@ -241,10 +241,19 @@ class ProductCli:
 
         # TODO: complete mall strategy by matching projectType (1: show, 2: mall)
         _projectType, projectId = ProjectStep()
+
         linkIds = GoodsStep(projectId=projectId) or []
-        
-        screenId, linkId, itemId, expressFee, projectName, needDeliver, needContact = ScreenStep(projectId=projectId, linkIds=linkIds)
-        skuId, skuSelected, saleStart, cost, act = SkuStep(projectId=projectId, linkId=linkId, screenId=screenId)
+
+        screenId, linkId, itemId, expressFee, projectName, needDeliver, needContact = ScreenStep(
+            projectId=projectId,
+            linkIds=linkIds,
+        )
+
+        skuId, skuSelected, saleStart, cost, act = SkuStep(
+            projectId=projectId,
+            linkId=linkId,
+            screenId=screenId,
+        )
 
         self.config["projectId"] = projectId if not linkIds else itemId
         self.config["linkId"] = linkId
