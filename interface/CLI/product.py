@@ -134,6 +134,7 @@ class ProductCli:
             """
             场次
 
+            projectId: 活动ID
             linkIds: 商品ID列表
             """
             try:
@@ -187,6 +188,8 @@ class ProductCli:
             """
             价位
 
+            projectId: 活动ID
+            linkId: 商品ID
             screenId: 场次ID
             """
             try:
@@ -227,8 +230,6 @@ class ProductCli:
         def FilenameStep(name: str) -> str:
             """
             文件名
-
-            skuid: 价位ID
             """
             filename = self.data.Inquire(
                 type="Text",
