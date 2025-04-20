@@ -34,10 +34,20 @@ class ProductCli:
             "screenId": 0,
             # 票种ID
             "skuId": 0,
+            # 商品ID
+            "linkId": 0,
             # 票价
             "cost": 0,
+            # 邮费
+            "deliverFee": 0,
+            # 售卖开始时间
+            "saleStart": 0,
             # 优惠信息
             "act": {},
+            # 是否需要填写收货信息
+            "needDeliver": False,
+            # 是否需要填写联系人信息
+            "needContact": False,
         }
 
         # 颜色ANSI代码
