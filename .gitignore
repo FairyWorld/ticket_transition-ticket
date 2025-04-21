@@ -423,3 +423,4 @@ doc/locale/
 config/**/**.yaml
 upx
 supermode.patch
+models
