@@ -45,6 +45,17 @@ class Info:
             106: "已取消",
         }
 
+    @logger.catch
+    def QueryRedirect(self, url: str) -> str:
+        """
+        重定向
+
+        url: b23.tv url
+        https://b23.tv/4TZUXj0
+        """
+        res = self.net.Response(method="get", url=url, isJson=False, isRedirect=False)
+        return res
+
     def QueryProject(self, projectId: int) -> tuple[int, str, dict]:
         """
         项目基本信息

@@ -75,6 +75,7 @@ class Request:
         url: str,
         params: dict = {},
         isJson: bool = True,
+        isRedirect: bool = True,
     ) -> dict:
         """
         网络
@@ -83,6 +84,7 @@ class Request:
         url: 地址 str
         params: 参数 dict
         isJson: 返回是否为JSON bool
+        isRedirect: 是否允许重定向 bool
         """
         methods = {
             "get": self.session.get,
@@ -94,8 +96,9 @@ class Request:
 
         try:
             if isJson:
-                dist = methods[method](
+                dist: httpx.Response = methods[method](
                     url=url,
+                    follow_redirects=isRedirect,
                     **({"params": params} if method == "get" else {"data": params}),
                 )
                 if dist.status_code == 200:
@@ -108,11 +111,15 @@ class Request:
                         "message": f"请求错误: {dist.status_code}",
                     }
             else:
-                methods[method](
+                dist: httpx.Response = methods[method](
                     url=url,
+                    follow_redirects=isRedirect,
                     **({"params": params} if method == "get" else {"data": params}),
                 )
-                return {}
+                if dist.status_code in range(300, 400):
+                    return dist.headers.get("Location")
+                else:
+                    return {}
 
         except (
             httpx.RequestError,
