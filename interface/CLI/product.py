@@ -114,32 +114,7 @@ class ProductCli:
                 return ProjectStep()
 
         @logger.catch
-        def GoodsStep(projectId: int) -> list[int]:
-            """
-            商品
-
-            projectId: 活动ID
-            """
-            try:
-                _, _, goodsInfo = self.info.QueryGoodsList(projectId=projectId)
-
-                if not goodsInfo:
-                    return []
-
-                dist = []
-                for i in goodsInfo:
-                    dist.append(i["link_id"])
-
-                return dist
-
-            except InfoException:
-                logger.exception("请重新配置活动信息!")
-                logger.warning("程序正在准备退出...")
-                sleep(5)
-                sys.exit()
-
-        @logger.catch
-        def ScreenStep(projectId: int, linkIds: list[int]) -> tuple[int, int, int, int, str, bool, bool]:
+        def ScreenStep(projectId: int) -> tuple[int, int, int, int, str, bool, bool]:
             """
             场次
 
@@ -150,10 +125,11 @@ class ProductCli:
                 _, _, projectInfo = self.info.QueryProject(projectId=projectId)
                 _, _, screenInfo = self.info.QueryTicketScreenList(projectId=projectId)
 
+                _, _, linkIds = self.info.QueryGoodsIds(projectId=projectId)
                 if linkIds:
                     for linkId in linkIds:
                         _, _, goodsScreenInfo = self.info.QueryGoodsScreenList(linkId=linkId)
-                        screenInfo = screenInfo + goodsScreenInfo
+                        screenInfo.extend(goodsScreenInfo)
 
                 lists = {
                     f"{self.YELLOW if screen['saleflag'] == '预售中' else ''}"
@@ -167,18 +143,9 @@ class ProductCli:
                     choices=list(lists.keys()),
                 )
 
-                dist = (
-                    (
-                        lists[select]["id"],
-                        projectInfo["id"],
-                        0,
-                        lists[select]["express_fee"],
-                        projectInfo["name"],
-                        projectInfo["need_deliver"],
-                        projectInfo["need_contact"],
-                    )
-                    if not linkIds
-                    else (
+                if "link_id" in lists[select]:
+                    # 商品
+                    dist = (
                         lists[select]["id"],
                         lists[select]["item_id"],
                         lists[select]["link_id"],
@@ -187,7 +154,17 @@ class ProductCli:
                         True,
                         True,
                     )
-                )
+                else:
+                    # 活动
+                    dist = (
+                        lists[select]["id"],
+                        projectInfo["id"],
+                        0,
+                        lists[select]["express_fee"],
+                        projectInfo["name"],
+                        projectInfo["need_deliver"],
+                        projectInfo["need_contact"],
+                    )
                 return dist
 
             except InfoException:
@@ -252,14 +229,10 @@ class ProductCli:
 
         print("下面开始配置商品!")
 
-        # TODO: complete mall strategy by matching projectType (1: show, 2: mall)
         _projectId = ProjectStep()
-
-        linkIds = GoodsStep(projectId=_projectId)
 
         screenId, projectId, linkId, expressFee, projectName, needDeliver, needContact = ScreenStep(
             projectId=_projectId,
-            linkIds=linkIds,
         )
 
         skuId, skuName, saleStart, cost, act = SkuStep(

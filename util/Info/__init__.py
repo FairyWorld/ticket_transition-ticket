@@ -110,7 +110,7 @@ class Info:
             case 0:
                 goods = res["data"]["list"]
                 if not goods:
-                    return code, msg, []
+                    return 114514, msg, []
 
                 dist = []
                 for good in goods:
@@ -123,6 +123,25 @@ class Info:
                             "saleflag": good["sale_flag_txt"],
                         }
                     )
+            case _:
+                dist = []
+
+        return code, msg, dist
+
+    def QueryGoodsIds(self, projectId: int) -> tuple[int, str, list[int]]:
+        """
+        商品ID列表
+
+        projectId: 项目ID
+        """
+        code, msg, goodsInfo = self.QueryGoodsList(projectId=projectId)
+
+        match code:
+            # 成功
+            case 0:
+                dist = []
+                for i in goodsInfo:
+                    dist.append(i["link_id"])
             case _:
                 dist = []
 
