@@ -51,7 +51,7 @@ class Login:
         self.data = Data()
         self.cap = Captcha()
 
-        self.source = "main_web"
+        self.source = "main_h5"
 
     def QRCode(self) -> dict:
         """
@@ -87,8 +87,6 @@ class Login:
                 if check["code"] == 0:
                     logger.success("【登录】登录成功")
                     self.cookie = self.net.GetCookie()
-                    # 补充Cookie参数
-                    # self.cookie = Data().CookieAppend(self.cookie) | self.cookie
                     return self.Status()
 
                 # 未扫描:86101 扫描未确认:86090

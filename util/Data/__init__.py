@@ -269,13 +269,20 @@ class Data:
             # https://api.bilibili.com/x/frontend/finger/spi
             "buvid4": "",
             # https://github.com/SocialSisterYi/bilibili-API-collect/issues/933#issuecomment-1931506993
-            "fingerprint": "",
             "buvid_fp": "",
-            # 浏览器JS
+            "fingerprint": "",
             "deviceFingerprint": "",
             # source
-            "msource": "",
-            "kfcSource": "",
+            "msource": "bilibiliapp",
+            "kfcSource": "bilibiliapp",
+            # unk
+            # "from": "",
+            # "kfcFrom": "",
+            # "rpdid": "",
+            # "enable_web_push": "",
+            # "enable_feed_channel": "",
+            # "home_feed_column": "",
+            # "browser_resolution": "",
         }
         return baseCookie | dist
 
