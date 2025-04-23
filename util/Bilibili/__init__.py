@@ -359,7 +359,7 @@ class Bilibili:
             "timestamp": timestamp,
             "buyer_info": json.dumps(self.buyer),
             "token": self.token,
-            "deviceId": secrets.token_hex(),
+            "deviceId": self.net.GetCookie()["deviceFingerprint"],
             "clickPosition": clickPosition,
             "requestSource": self.scene,
         }

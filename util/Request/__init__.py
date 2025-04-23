@@ -158,6 +158,16 @@ class Request:
         self.session.cookies.update(self.cookie)
 
     @logger.catch
+    def RefreshHeader(self, header: dict) -> None:
+        """
+        刷新Header
+
+        header: Header
+        """
+        self.header = header
+        self.session.headers.update(self.header)
+
+    @logger.catch
     def RequestHook(self, request: httpx.Request) -> None:
         """
         请求事件钩子

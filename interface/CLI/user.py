@@ -235,12 +235,26 @@ class UserCli:
             return filename
 
         print("下面开始配置用户!")
-        self.config["cookie"] = LoginStep()
-        self.config["header"] = self.net.GetHeader()
+
+        cookie = LoginStep()
+        cookie["msource"] = "h5"
+        self.net.RefreshCookie(cookie)
+
+        self.config["cookie"] = self.net.GetCookie()
+
+        self.config["user"] = self.info.QueryUser()
         self.config["buyer"] = BuyerStep()
         self.config["deliver"] = DeliverStep()
-        self.config["user"] = self.info.QueryUser()
         self.config["phone"] = PhoneStep()
+
+        header = self.net.GetHeader()
+        header["X-Risk-Header"] = self.data.GenerateRiskHeader(
+            uid=self.config["user"]["uid"],
+            deviceId=self.config["cookie"]["deviceFingerprint"],
+        )
+        self.net.RefreshHeader(header)
+
+        self.config["header"] = self.net.GetHeader()
 
         name = [i["name"] for i in self.config["buyer"]]
         self.conf.Save(

@@ -176,6 +176,30 @@ class Data:
         return timestamp + duration * 60 >= datetime.datetime.now().timestamp() >= timestamp
 
     @staticmethod
+    def GenerateRiskHeader(uid: str, deviceId: str, platform: str = "h5") -> str:
+        dist = [
+            f"platform/{platform}",
+            f"uid/{uid}",
+            f"deviceId/{deviceId}",
+        ]
+        # _dist = [
+        #     f"appkey/{appkey}",
+        #     f"brand/{brand}",
+        #     f"localBuvid/{localBuvid}",
+        #     f"mVersion/{mVersion}",
+        #     f"mallVersion/{mallVersion}",
+        #     f"model/{model}",
+        #     f"platform/{platform}",
+        #     f"uid/{uid}",
+        #     f"channel/{channel}",
+        #     f"deviceId/{deviceId}",
+        #     f"sLocale/{sLocale}",
+        #     f"cLocale/{cLocale}",
+        #     f"identify/{identify}"
+        # ]
+        return " ".join(dist)
+
+    @staticmethod
     def PasswordRSAEncrypt(password: str, public_key: str) -> str:
         """
         RSA加密密码
@@ -228,11 +252,10 @@ class Data:
     @staticmethod
     def CookieAppend(baseCookie: dict) -> dict:
         """
-        补充非浏览器登录用户Cookie数据
+        补充Cookie数据
 
         baseCookie: 基础Cookie
         """
-        # 已知
         dist = {
             # https://blog.csdn.net/weixin_41489908/article/details/130643493
             "_uuid": "",
@@ -247,11 +270,26 @@ class Data:
             "buvid4": "",
             # https://github.com/SocialSisterYi/bilibili-API-collect/issues/933#issuecomment-1931506993
             "fingerprint": "",
+            "buvid_fp": "",
             # 浏览器JS
             "deviceFingerprint": "",
+            # source
+            "msource": "",
+            "kfcSource": "",
         }
-        dist["buvid_fp"] = dist["fingerprint"]
-        return dist | baseCookie
+        return baseCookie | dist
+
+    @staticmethod
+    def HeaderAppend(baseHeader: dict) -> dict:
+        """
+        补充Header数据
+
+        baseHeader: 基础Header
+        """
+        dist = {
+            "X-Risk-Header": "",
+        }
+        return baseHeader | dist
 
     @staticmethod
     def Inquire(

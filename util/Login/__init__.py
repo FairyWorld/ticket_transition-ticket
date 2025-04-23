@@ -410,24 +410,6 @@ class Login:
             return self.cookie
 
     @logger.catch
-    def RefreshToken(self) -> bool:
-        """
-        刷新Token
-
-        https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/login/cookie_refresh.md
-        """
-        url = ""
-        params = {}
-        res = self.net.Response(method="post", url=url, params=params)
-
-        if res["code"] == 0:
-            logger.info("【刷新Token】刷新成功")
-            return True
-        else:
-            logger.error("【刷新Token】刷新失败")
-            return False
-
-    @logger.catch
     def ExitLogin(self) -> bool:
         """
         退出登录
