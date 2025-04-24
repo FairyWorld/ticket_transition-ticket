@@ -77,7 +77,7 @@ class Login:
                 method="get",
                 url="https://passport.bilibili.com/x/passport-login/web/qrcode/poll",
                 params={
-                    "qrcode_key": res["data"]["qrcode_key"], 
+                    "qrcode_key": res["data"]["qrcode_key"],
                 },
             )
 
@@ -231,7 +231,7 @@ class Login:
 
             res_info = self.net.Response(
                 method="get",
-                url=f"https://passport.bilibili.com/x/safecenter/user/info",
+                url="https://passport.bilibili.com/x/safecenter/user/info",
                 params={
                     "tmp_code": _token,
                 },

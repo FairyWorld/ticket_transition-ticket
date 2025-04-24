@@ -1,5 +1,4 @@
 import json
-import secrets
 from base64 import urlsafe_b64encode
 from random import randint
 from time import time
