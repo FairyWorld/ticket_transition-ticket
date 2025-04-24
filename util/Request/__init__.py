@@ -155,6 +155,7 @@ class Request:
         cookie: Cookie
         """
         self.cookie = cookie
+        self.session.cookies.clear()
         self.session.cookies.update(self.cookie)
 
     @logger.catch
