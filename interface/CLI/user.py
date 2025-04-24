@@ -1,6 +1,7 @@
 import sys
 from time import sleep
 
+import secrets
 from loguru import logger
 
 from util import Config, Data, Info, Login, Request
@@ -239,6 +240,7 @@ class UserCli:
         cookie = LoginStep()
         cookie["msource"] = "bilibiliapp"
         cookie["kfcSource"] = "bilibiliapp"
+        cookie["deviceFingerprint"] = secrets.token_hex()
         self.net.RefreshCookie(cookie)
         self.config["cookie"] = self.net.GetCookie()
         print(self.net.GetCookie())
