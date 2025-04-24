@@ -59,47 +59,42 @@ class Login:
 
         文档: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/login/login_action/QR.md
         """
-        self.net.Response(
-            method="get",
-            url="https://www.bilibili.com/",
-            isJson=False,
-        )
-
-        resp = self.net.Response(
+        res = self.net.Response(
             method="get",
             url="https://passport.bilibili.com/x/passport-login/web/qrcode/generate",
         )
 
-        if resp["code"] == 0:
-            url = resp["data"]["url"]
-            self.data.QRGenerate(url)
+        if res["code"] != 0:
+            raise LoginException(f"服务器不知道送来啥东西{json.dumps(res, indent=4)}")
 
-            t = 0
-            while True:
-                time.sleep(0.5)
-                respQR = self.net.Response(
-                    method="get",
-                    url="https://passport.bilibili.com/x/passport-login/web/qrcode/poll?source=main-fe-header&qrcode_key="
-                    + resp["data"]["qrcode_key"],
-                )
+        _url = res["data"]["url"]
+        self.data.QRGenerate(_url)
 
-                check = respQR["data"]
-                if check["code"] == 0:
+        t = 0
+        while True:
+            time.sleep(0.5)
+            _res = self.net.Response(
+                method="get",
+                url="https://passport.bilibili.com/x/passport-login/web/qrcode/poll",
+                params={
+                    "qrcode_key": res["data"]["qrcode_key"], 
+                },
+            )
+
+            match _res["data"]["code"]:
+                case 0:
                     logger.success("【登录】登录成功")
                     self.cookie = self.net.GetCookie()
                     return self.Status()
 
-                # 未扫描:86101 扫描未确认:86090
-                elif check["code"] in [86101, 86090]:
+                # 未扫描: 86101 扫描未确认: 86090
+                case 86101 | 86090:
                     t += 1
                     if t % 5 == 0:
                         logger.info("【登录】等待扫码...")
 
-                else:
-                    raise LoginException(f"{check['code']}: {check['message']}")
-
-        else:
-            raise LoginException(f"服务器不知道送来啥东西{json.dumps(resp, indent=4)}")
+                case _:
+                    raise LoginException(f"{_res['data']['code']}: {_res['data']['message']}")
 
     def Selenium(self) -> dict:
         """
@@ -201,89 +196,89 @@ class Login:
         salt_hash = salt["data"]["hash"]
         salt_key = salt["data"]["key"]
 
-        params = {
-            "username": username,
-            "password": self.data.PasswordRSAEncrypt(salt_hash + password, salt_key),
-            "keep": "0",
-            "token": token,
-            "challenge": challenge,
-            "validate": validate,
-            "seccode": seccode,
-            "source": self.source,
-        }
-
         res = self.net.Response(
             method="post",
             url="https://passport.bilibili.com/x/passport-login/web/login",
-            params=params,
+            params={
+                "username": username,
+                "password": self.data.PasswordRSAEncrypt(salt_hash + password, salt_key),
+                "keep": "0",
+                "token": token,
+                "challenge": challenge,
+                "validate": validate,
+                "seccode": seccode,
+                "source": self.source,
+            },
         )
 
         if res["code"] != 0:
             raise LoginException(f"登录失败 {res['code']}: {res['message']}")
 
-        if res["data"]["status"] == 0:
+        _status = res["data"]["status"]
+        if _status == 0:
             logger.success("【登录】登录成功")
             self.cookie = self.net.GetCookie()
             return self.Status()
 
-        else:  # 二次短信验证登录
+        else:
             logger.warning("【登录】登录失败, 需要二次验证")
 
-            tmp_url = res["data"]["url"]
-            tmp_token_match = re.search(r"tmp_token=(\w{32})", tmp_url)
-            tmp_token = tmp_token_match.group(1) if tmp_token_match else ""
-            scene_match = re.search(r"scene=([^&]+)", tmp_url)
-            scene = scene_match.group(1) if scene_match else "loginTelCheck"
+            _url = res["data"]["url"]
+            _match_token = re.search(r"tmp_token=(\w{32})", _url)
+            _token = _match_token.group(1) if _match_token else ""
+            _match_scene = re.search(r"scene=([^&]+)", _url)
+            _scene = _match_scene.group(1) if _match_scene else "loginTelCheck"
 
-            info = self.net.Response(
+            res_info = self.net.Response(
                 method="get",
-                url=f"https://passport.bilibili.com/x/safecenter/user/info?tmp_code={tmp_token}",
+                url=f"https://passport.bilibili.com/x/safecenter/user/info",
+                params={
+                    "tmp_code": _token,
+                },
             )
 
-            if not info["data"]["account_info"]["bind_tel"]:
+            if not res_info["data"]["account_info"]["bind_tel"]:
                 raise LoginException("手机号未绑定, 请重新选择登录方式")
 
-            hide_tel = info["data"]["account_info"]["hide_tel"]
+            hide_tel = res_info["data"]["account_info"]["hide_tel"]
             logger.info(f"【登录】手机号已绑定, 即将给 {hide_tel} 发送验证码")
 
             token, challenge, validate, seccode = self.GetPreCaptcha()
 
-            resend_params = {
-                "tmp_code": tmp_token,
-                "sms_type": scene,
-                "recaptcha_token": token,
-                "gee_challenge": challenge,
-                "gee_validate": validate,
-                "gee_seccode": seccode,
-            }
-
-            resend = self.net.Response(
+            res_resend = self.net.Response(
                 method="post",
                 url="https://passport.bilibili.com/x/safecenter/common/sms/send",
-                params=resend_params,
+                params={
+                    "tmp_code": _token,
+                    "sms_type": _scene,
+                    "recaptcha_token": token,
+                    "gee_challenge": challenge,
+                    "gee_validate": validate,
+                    "gee_seccode": seccode,
+                },
             )
 
-            if resend["code"] != 0:
-                raise LoginException(f"验证码发送失败: {resend['code']} {resend['message']}")
+            if res_resend["code"] != 0:
+                raise LoginException(f"验证码发送失败: {res_resend['code']} {res_resend['message']}")
 
             logger.success("【登录】验证码发送成功")
-            resend_token = resend["data"]["captcha_key"]
+            token = res_resend["data"]["captcha_key"]
             verify_code = self.data.Inquire(type="Text", message="请输入验证码")
 
-            if res["data"]["status"] == 1:
-                data = {
+            if _status == 1:
+                params = {
                     "verify_type": "sms",
-                    "tmp_code": tmp_token,
-                    "captcha_key": resend_token,
+                    "tmp_code": _token,
+                    "captcha_key": token,
                     "code": verify_code,
                 }
                 url = "https://passport.bilibili.com/x/safecenter/sec/verify"
 
-            elif res["data"]["status"] == 2:
-                data = {
+            elif _status == 2:
+                params = {
                     "type": "loginTelCheck",
-                    "tmp_code": tmp_token,
-                    "captcha_key": resend_token,
+                    "tmp_code": _token,
+                    "captcha_key": token,
                     "code": verify_code,
                 }
                 url = "https://passport.bilibili.com/x/safecenter/login/tel/verify"
@@ -291,10 +286,10 @@ class Login:
             else:
                 raise LoginException(f"未知错误: {res['data']['status']}")
 
-            reverify = self.net.Response(method="post", url=url, params=data)
+            res_reverify = self.net.Response(method="post", url=url, params=params)
 
-            if reverify["code"] != 0:
-                raise LoginException(f"验证码登录失败 {reverify['code']}: {reverify['message']}")
+            if res_reverify["code"] != 0:
+                raise LoginException(f"验证码登录失败 {res_reverify['code']}: {res_reverify['message']}")
 
             logger.success("【登录】验证码登录成功")
             self.net.Response(
@@ -302,9 +297,10 @@ class Login:
                 url="https://passport.bilibili.com/x/passport-login/web/exchange_cookie",
                 params={
                     "source": "risk",
-                    "code": reverify["data"]["code"],
+                    "code": res_reverify["data"]["code"],
                 },
             )
+
             self.cookie = self.net.GetCookie()
             return self.Status()
 
