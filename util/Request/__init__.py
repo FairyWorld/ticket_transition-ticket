@@ -42,8 +42,9 @@ class Request:
 
         self.header = {
             "Accept": "*/*",
-            "Accept-Encoding": "gzip, deflate",
+            "Accept-Encoding": "gzip",
             "Connection": "keep-alive",
+            "content-type": "application/json",
             "User-Agent": UserAgent(os="android", platforms="mobile").random,
         } | header
 
@@ -114,7 +115,7 @@ class Request:
                 dist: httpx.Response = methods[method](
                     url=url,
                     follow_redirects=isRedirect,
-                    **({"params": params} if method == "get" else {"data": params}),
+                    **({"json": params} if method == "get" else {"json": params}),
                 )
                 if dist.status_code in range(300, 400):
                     return dist.headers.get("Location")
@@ -166,6 +167,7 @@ class Request:
         header: Header
         """
         self.header = header
+        self.session.headers.clear()
         self.session.headers.update(self.header)
 
     @logger.catch
