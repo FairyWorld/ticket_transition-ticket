@@ -236,10 +236,12 @@ class UserCli:
 
         print("下面开始配置用户!")
 
-        self.config["cookie"] = LoginStep()
-        self.config["cookie"]["msource"] = "bilibiliapp"
-        self.config["cookie"]["kfcSource"] = "bilibiliapp"
-        self.net.RefreshCookie(self.config["cookie"])
+        cookie = LoginStep()
+        cookie["msource"] = "bilibiliapp"
+        cookie["kfcSource"] = "bilibiliapp"
+        self.net.RefreshCookie(cookie)
+        self.config["cookie"] = self.net.GetCookie()
+        print(self.net.GetCookie())
 
         self.config["user"] = self.info.QueryUser()
         self.config["buyer"] = BuyerStep()
