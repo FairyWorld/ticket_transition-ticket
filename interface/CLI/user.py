@@ -255,8 +255,6 @@ class UserCli:
         )
         self.net.RefreshHeader(self.config["header"])
 
-        self.config["header"] = self.net.GetHeader()
-
         name = [i["name"] for i in self.config["buyer"]]
         self.conf.Save(
             FilenameStep(name=name),
