@@ -111,7 +111,7 @@ class Request:
                 )
 
             if dist.status_code == 200:
-                if "application/json" in dist.headers:
+                if "application/json" in dict(dist.headers)["content-type"]:
                     return dist.json()
                 else:
                     return {
