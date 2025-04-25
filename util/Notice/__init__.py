@@ -99,7 +99,7 @@ class Notice:
             "channel": "wechat",
         }
 
-        self.net.Response(method="post", url=url, params=data, isJson=False)
+        self.net.Response(method="post", url=url, params=data)
 
     @logger.catch
     def Ding(self, token: str) -> None:
