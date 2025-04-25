@@ -62,6 +62,7 @@ class Login:
         res = self.net.Response(
             method="get",
             url="https://passport.bilibili.com/x/passport-login/web/qrcode/generate",
+            isJson=False,
         )
 
         if res["code"] != 0:
@@ -164,6 +165,7 @@ class Login:
         res = self.net.Response(
             method="post",
             url="https://passport.bilibili.com/x/safecenter/captcha/pre",
+            isJson=False,
         )
 
         if res["code"] == 0:
@@ -191,6 +193,7 @@ class Login:
         salt = self.net.Response(
             method="get",
             url="https://passport.bilibili.com/x/passport-login/web/key",
+            isJson=False,
         )
 
         salt_hash = salt["data"]["hash"]
@@ -209,6 +212,7 @@ class Login:
                 "seccode": seccode,
                 "source": self.source,
             },
+            isJson=False,
         )
 
         if res["code"] != 0:
@@ -235,6 +239,7 @@ class Login:
                 params={
                     "tmp_code": _token,
                 },
+                isJson=False,
             )
 
             if not res_info["data"]["account_info"]["bind_tel"]:
@@ -256,6 +261,7 @@ class Login:
                     "gee_validate": validate,
                     "gee_seccode": seccode,
                 },
+                isJson=False,
             )
 
             if res_resend["code"] != 0:
@@ -299,6 +305,7 @@ class Login:
                     "source": "risk",
                     "code": res_reverify["data"]["code"],
                 },
+                isJson=False,
             )
 
             self.cookie = self.net.GetCookie()
@@ -329,6 +336,7 @@ class Login:
             method="post",
             url="https://passport.bilibili.com/x/passport-login/web/sms/send",
             params=params,
+            isJson=False,
         )
 
         if res["code"] == 0:
@@ -338,7 +346,7 @@ class Login:
         else:
             raise LoginException(f"验证码发送失败 {res['code']}: {res['message']}")
 
-    def SMSVerify(self, tel: str, code: str, captcha_key: str) -> dict:
+    def SMSVerify(self, tel: int, code: int, captcha_key: str) -> dict:
         """
         手机号登录 - 发送验证码
 
@@ -349,7 +357,7 @@ class Login:
         文档: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/login/login_action/SMS.md
         """
         params = {
-            "cid": "86",
+            "cid": 86,
             "tel": tel,
             "code": code,
             "source": self.source,
@@ -361,6 +369,7 @@ class Login:
             method="post",
             url="https://passport.bilibili.com/x/passport-login/web/login/sms",
             params=params,
+            isJson=False,
         )
 
         if res["code"] == 0:
