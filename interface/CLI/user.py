@@ -1,7 +1,7 @@
+import secrets
 import sys
 from time import sleep
 
-import secrets
 from loguru import logger
 
 from util import Config, Data, Info, Login, Request
@@ -123,7 +123,7 @@ class UserCli:
                             type="Text",
                             message="请输入手机号",
                         )
-                        captcha_key = login.SMSSend(tel)
+                        captcha_key = login.SMSSend(int(tel))
                         if captcha_key:
                             code = self.data.Inquire(
                                 type="Text",
@@ -240,7 +240,7 @@ class UserCli:
         self.config["cookie"] = LoginStep()
         self.config["cookie"]["msource"] = "bilibiliapp"
         self.config["cookie"]["kfcSource"] = "bilibiliapp"
-        self.config["cookie"]["deviceFingerprint"] = secrets.token_hex()
+        self.config["cookie"]["deviceFingerprint"] = secrets.token_hex(16)
         self.net.RefreshCookie(self.config["cookie"])
 
         self.config["user"] = self.info.QueryUser()
@@ -248,12 +248,12 @@ class UserCli:
         self.config["deliver"] = DeliverStep()
         self.config["phone"] = PhoneStep()
 
-        header = self.net.GetHeader()
-        header["X-Risk-Header"] = self.data.GenerateRiskHeader(
+        self.config["header"] = self.net.GetHeader()
+        self.config["header"]["X-Risk-Header"] = self.data.GenerateRiskHeader(
             uid=self.config["user"]["uid"],
             deviceId=self.config["cookie"]["deviceFingerprint"],
         )
-        self.net.RefreshHeader(header)
+        self.net.RefreshHeader(self.config["header"])
 
         self.config["header"] = self.net.GetHeader()
 

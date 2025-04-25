@@ -304,7 +304,7 @@ class Login:
             self.cookie = self.net.GetCookie()
             return self.Status()
 
-    def SMSSend(self, tel: str) -> str:
+    def SMSSend(self, tel: int) -> str:
         """
         手机号登录 - 发送验证码
 
@@ -316,7 +316,7 @@ class Login:
         token, challenge, validate, seccode = self.GetCaptcha()
 
         params = {
-            "cid": "86",
+            "cid": 86,
             "tel": tel,
             "source": self.source,
             "token": token,
