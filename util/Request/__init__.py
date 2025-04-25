@@ -44,7 +44,6 @@ class Request:
             "Accept": "*/*",
             "Accept-Encoding": "gzip",
             "Connection": "keep-alive",
-            "Content-Type": "application/json",
             "User-Agent": UserAgent(os="android", platforms="mobile").random,
         } | header
 
@@ -82,10 +81,10 @@ class Request:
         网络
 
         method: 方法 post/get
-        url: 地址 str
-        params: 参数 dict
-        isJson: 返回是否为JSON bool
-        isRedirect: 是否允许重定向 bool
+        url: 地址
+        params: 参数
+        isJson: 请求是否为 application/json
+        isRedirect: 是否允许重定向
         """
         methods = {
             "get": self.session.get,
@@ -97,12 +96,22 @@ class Request:
 
         try:
             if isJson:
+                # self.session.headers.update({"Content-Type": "application/json"})
                 dist: httpx.Response = methods[method](
                     url=url,
                     follow_redirects=isRedirect,
                     **({"params": params} if method == "get" else {"json": params}),
                 )
-                if dist.status_code == 200:
+            else:
+                # self.session.headers.update({"Content-Type": "application/x-www-form-urlencoded"})
+                dist: httpx.Response = methods[method](
+                    url=url,
+                    follow_redirects=isRedirect,
+                    **({"params": params} if method == "get" else {"data": params}),
+                )
+
+            if dist.status_code == 200:
+                if "application/json" in dist.headers:
                     return dist.json()
                 else:
                     return {
@@ -111,16 +120,15 @@ class Request:
                         "msg": f"请求错误: {dist.status_code}",
                         "message": f"请求错误: {dist.status_code}",
                     }
+            elif dist.status_code in range(300, 400) and not isRedirect:
+                return dist.headers.get("Location")
             else:
-                dist: httpx.Response = methods[method](
-                    url=url,
-                    follow_redirects=isRedirect,
-                    **({"params": params} if method == "get" else {"json": params}),
-                )
-                if dist.status_code in range(300, 400):
-                    return dist.headers.get("Location")
-                else:
-                    return {}
+                return {
+                    "code": 114514,
+                    "errno": 114514,
+                    "msg": f"请求错误: {dist.status_code}",
+                    "message": f"请求错误: {dist.status_code}",
+                }
 
         except (
             httpx.RequestError,
@@ -155,7 +163,6 @@ class Request:
 
         cookie: Cookie
         """
-        self.cookie = cookie
         self.session.cookies.update(self.cookie)
 
     @logger.catch
@@ -165,7 +172,6 @@ class Request:
 
         header: Header
         """
-        self.header = header
         self.session.headers.update(self.header)
 
     @logger.catch
