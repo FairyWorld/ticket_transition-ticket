@@ -10,10 +10,10 @@ editdistance_s==1.0.0
 editor==1.6.6
 fake-useragent==1.5.1
 filelock==3.18.0
-h11==0.14.0
+h11==0.16.0
 h2==4.2.0
 hpack==4.1.0
-httpcore==1.0.8
+httpcore==1.0.9
 httpx==0.27.2
 hyperframe==6.1.0
 identify==2.6.10
