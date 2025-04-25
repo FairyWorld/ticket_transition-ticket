@@ -52,7 +52,7 @@ class Info:
 
         url: b23.tv url
         """
-        res = self.net.Response(method="get", url=url, isJson=False, isRedirect=False)
+        res = self.net.Response(method="get", url=url, isRedirect=False)
         return res
 
     def QueryProject(self, projectId: int) -> tuple[int, str, dict]:
