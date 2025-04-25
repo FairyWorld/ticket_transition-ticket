@@ -42,8 +42,9 @@ class Request:
 
         self.header = {
             "Accept": "*/*",
-            "Accept-Encoding": "gzip, deflate",
+            "Accept-Encoding": "gzip",
             "Connection": "keep-alive",
+            "Content-Type": "application/json",
             "User-Agent": UserAgent(os="android", platforms="mobile").random,
         } | header
 
@@ -99,7 +100,7 @@ class Request:
                 dist: httpx.Response = methods[method](
                     url=url,
                     follow_redirects=isRedirect,
-                    **({"params": params} if method == "get" else {"data": params}),
+                    **({"params": params} if method == "get" else {"json": params}),
                 )
                 if dist.status_code == 200:
                     return dist.json()
@@ -114,7 +115,7 @@ class Request:
                 dist: httpx.Response = methods[method](
                     url=url,
                     follow_redirects=isRedirect,
-                    **({"params": params} if method == "get" else {"data": params}),
+                    **({"params": params} if method == "get" else {"json": params}),
                 )
                 if dist.status_code in range(300, 400):
                     return dist.headers.get("Location")
@@ -145,7 +146,7 @@ class Request:
         """
         获取Header
         """
-        return self.header
+        return dict(self.session.headers)
 
     @logger.catch
     def RefreshCookie(self, cookie: dict) -> None:
