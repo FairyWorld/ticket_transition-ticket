@@ -232,54 +232,22 @@ class Bilibili:
 
         Base64: URLSafeBase64
         """
-
-        def encrypt(char: int, type: str) -> str:
-            """
-            加密
-            """
-            match type:
-                # 6 位 timestamp 参数
-                case "timestamp":
-                    v1 = char.to_bytes(5, "big")
-                    v2 = urlsafe_b64encode(v1).decode("utf-8").rstrip("=")
-                    return v2[1:8]
-                # 4 位 projectId 参数
-                case "projectId":
-                    v1 = char.to_bytes(3, "big")
-                    v2 = urlsafe_b64encode(v1).decode("utf-8").rstrip("=")
-                    return v2
-                # 5 位 screenId 参数
-                case "screenId":
-                    v1 = char.to_bytes(4, "big")
-                    v2 = urlsafe_b64encode(v1).decode("utf-8").rstrip("=")
-                    return v2[1:6]
-                # 1 位 orderType 参数
-                case "orderType":
-                    v1 = char.to_bytes(2, "big")
-                    v2 = urlsafe_b64encode(v1).decode("utf-8").rstrip("=")
-                    return v2[2:3]
-                # 2 位 count 参数
-                case "count":
-                    v1 = char.to_bytes(1, "big")
-                    v2 = urlsafe_b64encode(v1).decode("utf-8").rstrip("=")
-                    return v2
-                # 5 位 skuId 参数
-                case "skuId":
-                    v1 = char.to_bytes(5, "big")
-                    v2 = urlsafe_b64encode(v1).decode("utf-8").rstrip("=")
-                    return v2[2:7]
-                case _:
-                    return ""
-
-        p1 = "999999"
-        # p1 = encrypt(int(time()), "timestamp")
-        p2 = encrypt(self.projectId, "projectId")
-        p3 = encrypt(self.screenId, "screenId")
-        p4 = encrypt(self.orderType, "orderType")
-        p5 = encrypt(self.count, "count")
-        p6 = encrypt(self.skuId, "skuId")
-        token = "w" + p1 + "A" + p2 + "A" + p3 + p4 + "A" + p5 + p6 + "."
-
+        token = bytes([192])
+        # 2-5字节为时间戳
+        timestamp = int(time.time())
+        token += timestamp.to_bytes(4, byteorder="big")
+        # 6-9字节为PROJECTID
+        token += self.projectId.to_bytes(4, byteorder="big")
+        # 10-13字节为SCREENID
+        token += self.screenId.to_bytes(4, byteorder="big")
+        # 14字节为ORDERTYPE
+        token += self.orderType.to_bytes(1, byteorder="big")
+        # 15-16字节为COUNT
+        token += self.count.to_bytes(2, byteorder="big")
+        # 17-20字节为SKUID
+        token += self.skuId.to_bytes(4, byteorder="big")
+        token = urlsafe_b64encode(token).decode().replace("=", ".")
+        
         self.token = token
         return 0, token
 
