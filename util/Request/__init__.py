@@ -163,6 +163,7 @@ class Request:
 
         cookie: Cookie
         """
+        self.cookie = cookie
         self.session.cookies.update(self.cookie)
 
     @logger.catch
@@ -172,6 +173,7 @@ class Request:
 
         header: Header
         """
+        self.header = header
         self.session.headers.update(self.header)
 
     @logger.catch
