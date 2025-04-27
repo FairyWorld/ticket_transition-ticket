@@ -1,5 +1,5 @@
 import json
-from base64 import urlsafe_b64encode
+from base64 import b64encode
 from random import randint
 from time import time
 
@@ -232,6 +232,9 @@ class Bilibili:
 
         Base64: URLSafeBase64
         """
+        map_orig = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/+="
+        map_real = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.."
+
         token = bytes([192]) # Token Header
         timestamp = int(time.time())
         token += timestamp.to_bytes(4, byteorder="big")
@@ -240,7 +243,8 @@ class Bilibili:
         token += self.orderType.to_bytes(1, byteorder="big")
         token += self.count.to_bytes(2, byteorder="big")
         token += self.skuId.to_bytes(4, byteorder="big")
-        token = urlsafe_b64encode(token).decode().replace("=", ".") # token replace = to .
+        token = base64.b64encode(token).decode()
+        token = token.translate(str.maketrans(map_orig, map_real))
         
         self.token = token
         return 0, token
