@@ -232,21 +232,15 @@ class Bilibili:
 
         Base64: URLSafeBase64
         """
-        token = bytes([192])
-        # 2-5字节为时间戳
+        token = bytes([192]) # Token Header
         timestamp = int(time.time())
         token += timestamp.to_bytes(4, byteorder="big")
-        # 6-9字节为PROJECTID
         token += self.projectId.to_bytes(4, byteorder="big")
-        # 10-13字节为SCREENID
         token += self.screenId.to_bytes(4, byteorder="big")
-        # 14字节为ORDERTYPE
         token += self.orderType.to_bytes(1, byteorder="big")
-        # 15-16字节为COUNT
         token += self.count.to_bytes(2, byteorder="big")
-        # 17-20字节为SKUID
         token += self.skuId.to_bytes(4, byteorder="big")
-        token = urlsafe_b64encode(token).decode().replace("=", ".")
+        token = urlsafe_b64encode(token).decode().replace("=", ".") # token replace = to .
         
         self.token = token
         return 0, token
