@@ -233,7 +233,7 @@ class Bilibili:
         Base64: URLSafeBase64
         """
         map_orig = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/+="
-        map_real = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.."
+        map_real = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-."
 
         token = bytes([192])  # Token Header
         timestamp = int(time())
