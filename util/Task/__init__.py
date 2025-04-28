@@ -539,7 +539,7 @@ class Task:
         match self.createOrderCode:
             # 成功
             case 0:
-                logger.success(f"【创建订单】订单创建成功! {msg}")
+                logger.success(f"【创建订单】订单创建成功!")
                 self.availableTime = int(time())
 
             # Token过期
@@ -635,7 +635,7 @@ class Task:
         match code:
             # 正常
             case 0:
-                logger.success(f"【创建订单状态】锁单成功! {msg}")
+                logger.success(f"【创建订单状态】锁单成功!")
 
                 self.createStatusCode, msg = self.api.QueryOrderStatus()
                 match self.createStatusCode:
