@@ -44,7 +44,7 @@ class Request:
             "Accept": "*/*",
             "Accept-Encoding": "gzip",
             "Connection": "keep-alive",
-            "User-Agent": UserAgent(os="android", platforms="mobile").random,
+            "User-Agent": UserAgent(os="Android", platforms="mobile").random,
         } | header
 
         self.session = httpx.Client(

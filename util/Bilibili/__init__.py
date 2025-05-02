@@ -234,7 +234,7 @@ class Bilibili:
         """
         token = bytes([192])
 
-        token += b'\x7f\xff\xff\xff'
+        token += b"\x7f\xff\xff\xff"
         # token += int(time()).to_bytes(4)
         token += self.projectId.to_bytes(4)
         token += self.screenId.to_bytes(4)
