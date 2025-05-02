@@ -652,18 +652,18 @@ test = ["pytest", "pytest-xdist", "setuptools"]
 
 [[package]]
 name = "py-machineid"
-version = "0.5.1"
+version = "0.7.0"
 description = "Get the unique machine ID of any host (without admin privileges)"
 optional = false
 python-versions = "*"
 groups = ["main"]
 files = [
-    {file = "py-machineid-0.5.1.tar.gz", hash = "sha256:235c485eccd2cd87aa0baad3085ea29f6e2e97933afb15ac7faa0b638fa4b274"},
-    {file = "py_machineid-0.5.1-py3-none-any.whl", hash = "sha256:d1eed7e7b2cfcf906dbc74d481dd664c26d0e73992f724aa2272c78d96b26c88"},
+    {file = "py-machineid-0.7.0.tar.gz", hash = "sha256:5a74a810e38b57b043b145c756c1e6ac161529cb7d83fe20099fcb986acc577b"},
+    {file = "py_machineid-0.7.0-py3-none-any.whl", hash = "sha256:3dacc322b0511383d79f1e817a2710b19bcfb820a4c7cea34aaa329775fef468"},
 ]
 
 [package.dependencies]
-winregistry = {version = "*", markers = "sys_platform == \"win32\""}
+winregistry = {version = ">=2.0.1,<3.0.0", markers = "sys_platform == \"win32\""}
 
 [[package]]
 name = "pyaudio"
@@ -1313,4 +1313,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.14"
-content-hash = "ac6417391fa050019de9667a6573d52996a689e12a7b938d4dc9317b9219482e"
+content-hash = "fb51866972488a1ec896066587595d4b0eb0b32aeb39b72aab7d50ee68ac151a"
