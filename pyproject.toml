@@ -11,7 +11,7 @@ package-mode = false
 python = ">=3.10,<3.14"
 transitions = "^0.9.1"
 httpx = {extras = ["http2", "socks"], version = "^0.28.1"}
-fake-useragent = "^1.5.1"
+fake-useragent = "^2.2.0"
 loguru = "^0.7.2"
 bili-ticket-gt-python = "^0.3.1"
 pycryptodome = "^3.20.0"
