@@ -2,6 +2,7 @@ import base64
 import datetime
 import json
 import os
+import re
 import sys
 from sys import argv
 from time import sleep
@@ -335,10 +336,17 @@ class Data:
             theme=CustomThemes(),
         )
 
-        if res is not None:
-            return res["res"]
-        else:
+        if res is None:
             logger.error("【交互】未知错误!")
             logger.warning("程序正在准备退出...")
             sleep(5)
             sys.exit()
+        
+        if type == "Text":
+            p = re.compile(r'(?:\x1b$$[0-9;]*[mHJ]|[\r\n\x7f\x00-\x1f])')
+            result = p.sub("", res["res"])
+        else:
+            result = res["res"]
+
+        return result
+        
