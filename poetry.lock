@@ -783,14 +783,14 @@ hook-testing = ["execnet (>=1.5.0)", "psutil", "pytest (>=2.7.3)"]
 
 [[package]]
 name = "pyinstaller-hooks-contrib"
-version = "2025.3"
+version = "2025.4"
 description = "Community maintained hooks for PyInstaller"
 optional = false
 python-versions = ">=3.8"
 groups = ["dev"]
 files = [
-    {file = "pyinstaller_hooks_contrib-2025.3-py3-none-any.whl", hash = "sha256:70cba46b1a6b82ae9104f074c25926e31f3dde50ff217434d1d660355b949683"},
-    {file = "pyinstaller_hooks_contrib-2025.3.tar.gz", hash = "sha256:af129da5cd6219669fbda360e295cc822abac55b7647d03fec63a8fcf0a608cf"},
+    {file = "pyinstaller_hooks_contrib-2025.4-py3-none-any.whl", hash = "sha256:6c2d73269b4c484eb40051fc1acee0beb113c2cfb3b37437b8394faae6f0d072"},
+    {file = "pyinstaller_hooks_contrib-2025.4.tar.gz", hash = "sha256:5ce1afd1997b03e70f546207031cfdf2782030aabacc102190677059e2856446"},
 ]
 
 [package.dependencies]
@@ -990,14 +990,14 @@ xmod = "*"
 
 [[package]]
 name = "selenium"
-version = "4.31.0"
+version = "4.32.0"
 description = "Official Python bindings for Selenium WebDriver"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "selenium-4.31.0-py3-none-any.whl", hash = "sha256:7b8b8d5e424d7133cb7aa656263b19ac505ec26d65c0f921a696e7e2c5ccd95b"},
-    {file = "selenium-4.31.0.tar.gz", hash = "sha256:441cffc436a2e6659fe3cfb012692435652efd38b0d368d16f661a5db47825f5"},
+    {file = "selenium-4.32.0-py3-none-any.whl", hash = "sha256:c4d9613f8a45693d61530c9660560fadb52db7d730237bc788ddedf442391f97"},
+    {file = "selenium-4.32.0.tar.gz", hash = "sha256:b9509bef4056f4083772abb1ae19ff57247d617a29255384b26be6956615b206"},
 ]
 
 [package.dependencies]
@@ -1010,14 +1010,14 @@ websocket-client = ">=1.8,<2.0"
 
 [[package]]
 name = "setuptools"
-version = "80.1.0"
+version = "80.3.1"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
 optional = false
 python-versions = ">=3.9"
 groups = ["dev"]
 files = [
-    {file = "setuptools-80.1.0-py3-none-any.whl", hash = "sha256:ea0e7655c05b74819f82e76e11a85b31779fee7c4969e82f72bab0664e8317e4"},
-    {file = "setuptools-80.1.0.tar.gz", hash = "sha256:2e308396e1d83de287ada2c2fd6e64286008fe6aca5008e0b6a8cb0e2c86eedd"},
+    {file = "setuptools-80.3.1-py3-none-any.whl", hash = "sha256:ea8e00d7992054c4c592aeb892f6ad51fe1b4d90cc6947cc45c45717c40ec537"},
+    {file = "setuptools-80.3.1.tar.gz", hash = "sha256:31e2c58dbb67c99c289f51c16d899afedae292b978f8051efaf6262d8212f927"},
 ]
 
 [package.extras]
