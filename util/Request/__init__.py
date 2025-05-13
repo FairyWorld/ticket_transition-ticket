@@ -112,7 +112,16 @@ class Request:
 
             if dist.status_code == 200:
                 if "application/json" in dict(dist.headers)["content-type"]:
-                    return dist.json()
+                    res = dist.json()
+                    code = res.get("code") if res.get("code") is not None else res.get("errno")
+                    msg = res.get("msg") if res.get("msg") is not None else res.get("message") 
+                    return {
+                        "code": code,
+                        "errno": code,
+                        "msg": msg,
+                        "message": msg,
+                        **{k: v for k, v in res.items() if k not in ["code", "errno", "msg", "message"]},
+                    }
                 else:
                     return {
                         "code": 114514,
