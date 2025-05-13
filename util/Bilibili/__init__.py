@@ -315,7 +315,6 @@ class Bilibili:
             "project_id": self.projectId,
             "screen_id": self.screenId,
             "sku_id": self.skuId,
-            "link_id": self.linkId,
             "count": self.count,
             "pay_money": self.payment,
             "order_type": self.orderType,
@@ -325,6 +324,7 @@ class Bilibili:
             "deviceId": self.net.GetCookie()["deviceFingerprint"],
             "clickPosition": clickPosition,
             "requestSource": self.scene,
+            "again": 1,
         }
 
         # 优惠票
@@ -342,6 +342,10 @@ class Bilibili:
         if self.needContact:
             params["buyer"] = self.user["username"]
             params["tel"] = self.phone
+
+        # 场贩
+        if self.link_id:
+            params["link_id"] = self.link_id
 
         res = self.net.Response(method="post", url=url, params=params)
         code = res["errno"]
