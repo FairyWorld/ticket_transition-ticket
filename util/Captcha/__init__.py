@@ -30,10 +30,10 @@ class Captcha:
             from bili_ticket_gt_python import ClickPy
 
             self.gtPy = ClickPy()
-        except ImportError:
+        except ImportError as e:
+            logger.error(e)
             self.verify = "Manual"
             logger.warning("【验证】无法导入极验自动验证, 将使用手动验证!")
-            logger.warning("【验证】这种情况一般是因为系统版本略老!")
 
         self.verify = verify
         self.gt = gt
