@@ -13,6 +13,7 @@ transitions = "^0.9.1"
 httpx = {extras = ["http2", "socks"], version = "^0.28.1"}
 fake-useragent = "^2.2.0"
 loguru = "^0.7.2"
+sentry-sdk = {extras = ["httpx", "loguru"], version = "^2.28.0"}
 bili-ticket-gt-python = "^0.3.1"
 pycryptodome = "^3.20.0"
 pyyaml = "^6.0.1"

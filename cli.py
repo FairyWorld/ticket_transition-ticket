@@ -1,6 +1,7 @@
 import atexit
 import shutil
 import sys
+import sentry_sdk
 
 from loguru import logger
 
@@ -40,6 +41,12 @@ if __name__ == "__main__":
 |
 |=====================================================================
 """
+    )
+
+    # Sentry
+    sentry_sdk.init(
+        dsn="https://efcd558720f0d6d21e80dbe9d9b7c3da@o4506321578622976.ingest.us.sentry.io/4509321060679680",
+        send_default_pii=True,
     )
 
     # 日志

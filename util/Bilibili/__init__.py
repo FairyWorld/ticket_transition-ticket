@@ -165,7 +165,7 @@ class Bilibili:
                 }
             case _:
                 params = {}
-                logger.error("【验证】这是什么验证类型?")
+                logger.error("【验证】验证类型错误")
 
         res = self.net.Response(method="get", url=url, params=params)
         code = res["code"]

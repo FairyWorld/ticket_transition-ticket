@@ -2,8 +2,8 @@ import logging
 import sys
 import threading
 import webbrowser
+import sentry_sdk
 from time import sleep, time
-
 from loguru import logger
 from transitions import Machine, State
 
@@ -667,6 +667,7 @@ class Task:
             message=f"下单成功! 请在十分钟内支付, 链接:{url}",
         )
         logger.success(f"【完成】下单成功! 请在十分钟内支付, 链接:{url}")
+        sentry_sdk.capture_message(message="抢票成功", level="info")
         webbrowser.open(url)
 
         # 通知
@@ -757,7 +758,7 @@ class Task:
             return True
 
         except KeyboardInterrupt:
-            logger.error("【状态机】任务被中断!")
+            logger.warning("【状态机】任务被中断!")
 
             # 状态机状态网页显示体验
             # self.machine.stop_server()
