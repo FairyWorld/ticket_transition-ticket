@@ -463,6 +463,38 @@ class Info:
         }
         return dist
 
+    def QuerySaleStart(self, projectId: int, linkId: int, screenId: int, skuId: int, cost: int) -> int:
+        """
+        开售时间
+        """
+        code, _, skuInfo = self.QuerySku(
+            projectId=projectId,
+            linkId=linkId,
+            screenId=screenId,
+            skuId=skuId,
+            cost=cost,
+        )
+
+        match code:
+            # 成功
+            case 0:
+                dist = skuInfo["sale_start"]
+            case _:
+                dist = 0
+
+        return dist
+
+    def QueryTimestamp(self) -> int:
+        """
+        时间戳
+        """
+        url = "https://show.bilibili.com/api/activity/index/home/timestamp"
+        res = self.net.Response(method="get", url=url)
+
+        dist = res["data"]
+
+        return dist
+
     def QuerySearchList(self, keyword: str, page: int = 1) -> list[dict]:
         """
         搜索

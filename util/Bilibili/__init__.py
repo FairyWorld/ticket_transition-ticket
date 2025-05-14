@@ -248,11 +248,11 @@ class Bilibili:
         return 0, token
 
     @logger.catch
-    def QuerySaleStartTime(self) -> tuple[int, str, int]:
+    def QueryStartTime(self) -> tuple[int, str, int]:
         """
         获取开票时间
         """
-        code, msg, skuInfo = self.info.QuerySku(
+        saleStart = self.info.QuerySaleStart(
             projectId=self.projectId,
             linkId=self.linkId,
             screenId=self.screenId,
@@ -260,14 +260,11 @@ class Bilibili:
             cost=self.cost,
         )
 
-        match code:
-            # 成功
-            case 0:
-                saleStart = skuInfo["sale_start"]
-            case _:
-                saleStart = 0
+        interval = self.info.QueryTimestamp() - int(time())
+        saleStart = saleStart + interval
+        logger.info(f"【开票时间】已校准时间差为: {interval}秒")
 
-        return code, msg, saleStart
+        return 0, "", saleStart
 
     @logger.catch
     def QueryAmount(self) -> tuple[int, str, bool, int, int]:

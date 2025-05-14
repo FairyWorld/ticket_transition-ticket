@@ -301,7 +301,7 @@ class Task:
         等待倒计时
         """
         logger.warning("【等待开票】请确保本机时间是北京时间, 服务器用户尤其要注意!")
-        code, msg, start_time = self.api.QuerySaleStartTime()
+        code, msg, start_time = self.api.QueryStartTime()
 
         match code:
             # 成功
@@ -337,7 +337,7 @@ class Task:
         """
         等待开票
         """
-        code, msg, start_time = self.api.QuerySaleStartTime()
+        code, msg, start_time = self.api.QueryStartTime()
 
         match code:
             # 成功
