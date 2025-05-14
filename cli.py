@@ -106,6 +106,7 @@ if __name__ == "__main__":
             act=productConfig["act"],
             needDeliver=productConfig["needDeliver"],
             needContact=productConfig["needContact"],
+            bind=productConfig["bind"],
             buyer=userConfig["buyer"],
             count=len(userConfig["buyer"]),
             deliver=userConfig["deliver"],

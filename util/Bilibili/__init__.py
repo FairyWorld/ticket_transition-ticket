@@ -28,6 +28,7 @@ class Bilibili:
         deliverFee: int,
         needDeliver: bool,
         needContact: bool,
+        bind: int,
         package: dict,
         act: dict,
         buyer: dict,
@@ -50,6 +51,7 @@ class Bilibili:
         deliverFee: 运费
         needDeliver: 是否需要填写收货信息
         needContact: 是否需要填写联系人信息
+        bind: ID绑定类型
         package: 包裹信息
         act: 优惠信息
         buyer: 购买者信息
@@ -79,6 +81,7 @@ class Bilibili:
 
         self.needDeliver = needDeliver
         self.needContact = needContact
+        self.bind = bind
         self.package = package
         self.act = act
         self.buyer = buyer
@@ -328,6 +331,7 @@ class Bilibili:
             "deviceId": self.net.GetCookie()["deviceFingerprint"],
             "clickPosition": clickPosition,
             "requestSource": self.scene,
+            "id_bind": self.bind,
             "is_package": self.package["is_package"],
             "package_num": self.package["package_num"],
             "coupon_code": self.coupon,

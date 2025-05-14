@@ -114,7 +114,7 @@ class ProductCli:
                 return ProjectStep()
 
         @logger.catch
-        def ScreenStep(projectId: int) -> tuple[int, int, int, int, str, bool, bool]:
+        def ScreenStep(projectId: int) -> tuple[int, int, int, int, str, int, bool, bool]:
             """
             场次
 
@@ -151,6 +151,7 @@ class ProductCli:
                         lists[select]["link_id"],
                         lists[select]["express_fee"],
                         projectInfo["name"],
+                        projectInfo["id_bind"],
                         True,
                         True,
                     )
@@ -162,6 +163,7 @@ class ProductCli:
                         0,
                         lists[select]["express_fee"],
                         projectInfo["name"],
+                        projectInfo["id_bind"],
                         projectInfo["need_deliver"],
                         projectInfo["need_contact"],
                     )
@@ -232,7 +234,7 @@ class ProductCli:
 
         _projectId = ProjectStep()
 
-        screenId, projectId, linkId, expressFee, projectName, needDeliver, needContact = ScreenStep(
+        screenId, projectId, linkId, expressFee, projectName, bind, needDeliver, needContact = ScreenStep(
             projectId=_projectId,
         )
 
@@ -253,6 +255,7 @@ class ProductCli:
         self.config["act"] = act
         self.config["needDeliver"] = needDeliver
         self.config["needContact"] = needContact
+        self.config["bind"] = bind
 
         self.conf.Save(
             FilenameStep(name=f"{projectName} ({skuName})"),
