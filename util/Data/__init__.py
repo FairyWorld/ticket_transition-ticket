@@ -337,7 +337,8 @@ class Data:
         )
 
         if res is None:
-            logger.warning("【交互】未知错误! 程序正在准备退出...")
+            logger.error("【交互】未知错误!")
+            logger.warning("程序正在准备退出...")
             sleep(5)
             sys.exit()
 
