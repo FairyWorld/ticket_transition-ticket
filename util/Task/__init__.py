@@ -64,7 +64,7 @@ class Task:
             # 1.25-5
             [5.0, self.sleep],
             # 5-8
-            [8, self.sleep * 1.5],
+            [8, self.sleep * 2.0],
             # 8-10.5
             [10.5, self.sleep / 1.5],
         ]
