@@ -403,9 +403,16 @@ class Bilibili:
         code = res["errno"]
         msg = res["msg"]
 
-        # 100012: 订单未完成,请等待 且 订单ID相同, 说明订单已经创建
-        if code == 100012 and self.orderId == res["data"]["order_id"]:
-            code = 0
+        match code:
+            # 100012: 订单未完成
+            case 100012:
+                # 订单ID相同, 说明订单已经创建
+                if res["data"]["order_id"] == self.orderId:
+                    code = 0
+
+            # 100040: 0元订单
+            case 100040:
+                code = 0
 
         return code, msg
 
