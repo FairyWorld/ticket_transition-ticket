@@ -44,7 +44,6 @@ class Task:
         self.api = api
 
         self.notice = notice
-        self.sleep = sleep
 
         self.data = Data()
 
@@ -519,13 +518,13 @@ class Task:
                     logger.info("【等待余票】暂时无票, 持续查询票仓中...")
                     self.availableTime = 0
                     # 刷新
-                    sleep(self.sleep)
+                    sleep(self.sleep / 2)
 
             # 不知道
             case _:
                 logger.error(f"【等待余票】{code}: {msg}")
                 # 刷新
-                sleep(self.sleep)
+                sleep(self.sleep / 2)
 
     @logger.catch
     def CreateOrderAction(self) -> None:
